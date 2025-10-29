@@ -26,7 +26,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("sss", $fullname, $user, $hashedPassword);
 
 if ($stmt->execute()) {
-    echo "Registration successful! <a href='loginpage.html'>Login now</a>";
+    echo "Registration successful! <a href='loginpage.php'>Login now</a>";
 } else {
     echo "Error: " . $stmt->error;
 }
