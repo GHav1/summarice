@@ -1,40 +1,58 @@
 <?php
+session_start();
+
+// Database connection
 $servername = "localhost";
-$username = "root";
-$password = "";
+$dbusername = "root";
+$dbpassword = "";
 $dbname = "summarice_db";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+$conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 
-$user = $_POST['email'];
-$pass = $_POST['password'];
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
+// Collect form input
+$user = trim($_POST['email']);
+$pass = trim($_POST['password']);
+
+if (empty($user) || empty($pass)) {
+    header("Location: loginpage.php?error=1");
+    exit;
+}
+
+// Prepare and execute query
 $sql = "SELECT * FROM users WHERE username = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows > 0) {
+if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
 
     if (password_verify($pass, $row['password'])) {
-        session_start();
+        // Correct login
         $_SESSION['username'] = $row['username'];
         $_SESSION['fullname'] = $row['full_name'];
 
         if ($row['username'] === 'admin') {
             header("Location: admin_dashboard.php");
+            exit;
         } else {
-            echo "Welcome, " . htmlspecialchars($row['full_name']) . "! (You are logged in.)";
+            header("Location: index.html"); // redirect normal users to home
+            exit;
         }
-        exit;
     } else {
-        echo "Invalid password.";
+        // Password incorrect
+        header("Location: loginpage.php?error=1");
+        exit;
     }
 } else {
-    echo "User not found.";
+    // Username not found
+    header("Location: loginpage.php?error=1");
+    exit;
 }
 
 $stmt->close();
