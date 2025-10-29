@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
-    header("Location: loginpage.html");
+    header("Location: loginpage.php");
     exit;
 }
 ?>
