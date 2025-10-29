@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Summarice</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>Create an Account</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="loginpage.html">Login</a>
+    </nav>
+
+    <main>
+        <section class="login-section">
+            <h2>Register</h2>
+            <form action="register.php" method="post" class="login-form">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required>
+
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <label for="confirm">Confirm Password:</label>
+                <input type="password" id="confirm" name="confirm" required>
+
+                <button type="submit">Register</button>
+
+                <p class="signup-text">
+                    Already have an account? <a href="loginpage.html">Login here</a>
+                </p>
+            </form>
+        </section>
+    </main>
+
+</body>
+</html>
