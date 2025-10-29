@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summarice - Login</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .error-message {
+            color: red;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
 
@@ -16,13 +24,17 @@
     <nav>
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a href="loginpage.html" class="active">Login</a>
+        <a href="loginpage.php" class="active">Login</a>
     </nav>
 
     <main>
         <section class="login-section">
             <h2>Login</h2>
             <p>Enter credentials to Start Viewing.</p>
+
+            <?php if (isset($_GET['error']) && $_GET['error'] === '1'): ?>
+                <p class="error-message">Username or password is incorrect.</p>
+            <?php endif; ?>
 
             <form action="login.php" method="post" class="login-form">
                 <label for="email">Email or Username:</label><br>
@@ -41,7 +53,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 summarice website
+        <p>&copy; 2025 summarice website</p>
     </footer>
 
 </body>
