@@ -11,7 +11,9 @@ def get_books():
             database="summarice_db"
         )
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id, book_name AS title, author_name AS author, content FROM books")
+        cursor.execute(
+            "SELECT id, book_name AS title, author_name AS author, content FROM books"
+        )
         books = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -25,3 +27,4 @@ if __name__ == "__main__":
     books = get_books()
     # ✅ Always print pure JSON output (no extra text)
     print(json.dumps(books, ensure_ascii=False))
+
