@@ -21,11 +21,24 @@
         <p>Log in to continue</p>
     </header>
 
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="loginpage.php" class="active">Login</a>
-    </nav>
+<nav class="navbar">
+  <div class="nav-left">
+      <a href="index.php">Home</a>
+      <a href="about.php">About</a>
+      <?php if (isset($_SESSION['username']) && $_SESSION['username'] === 'admin'): ?>
+          <a href="admin_dashboard.php">Admin Dashboard</a>
+      <?php endif; ?>
+  </div>
+
+  <div class="nav-right">
+      <?php if (isset($_SESSION['username'])): ?>
+          <span class="username">👤 <?php echo htmlspecialchars($_SESSION['username']); ?></span>
+          <a href="logout.php" class="logout-btn">Logout</a>
+      <?php else: ?>
+          <a href="loginpage.php">Login</a>
+      <?php endif; ?>
+  </div>
+</nav>
 
     <main>
         <section class="login-section">
@@ -37,7 +50,7 @@
             <?php endif; ?>
 
             <form action="login.php" method="post" class="login-form">
-                <label for="email">Email or Username:</label><br>
+                <label for="email">Username:</label><br>
                 <input type="text" id="email" name="email" placeholder="Enter your email or username" required><br><br>
 
                 <label for="password">Password:</label><br>
@@ -46,7 +59,7 @@
                 <button type="submit">Login</button>
 
                 <p class="signup-text">
-                    Don’t have an account? <a href="signup.html">Sign up</a>
+                    Don’t have an account? <a href="signup.php">Sign up</a>
                 </p>
             </form>
         </section>
