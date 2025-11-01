@@ -3,57 +3,68 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #f4f4f4;
     color: #333;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding-top: 125px; /* header (≈65px) + navbar (≈60px) */
+    padding-bottom: 100px; /* footer */
+    overflow-x: hidden;
 }
 
 /* ---------- Header ---------- */
 header {
-    background-color: #4CAF50;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #43a047, #66bb6a);
     color: white;
-    padding: 15px;
     text-align: center;
+    padding: 12px 0;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+header p {
+    margin: 3px 0 0 0;
+    font-size: 14px;
 }
 
 /* ---------- Navigation Bar ---------- */
-
-/* Default navbar style for all pages */
-nav {
-    background-color: #333;
-    overflow: hidden;
-    padding: 18px 30px;
+.navbar {
+    position: fixed;
+    top: 68px; /* directly below header */
+    left: 0;
+    width: 100%;
+    background-color: #222;
+    color: white;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
+    padding: 10px 25px;
+    z-index: 999;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Navbar with left and right sections (used on all main pages) */
-nav.navbar {
-    display: flex;
-    align-items: center;
-    /* keep left items left; .nav-right will push itself to the right using margin-left:auto */
-}
-
-/* Left/right containers */
 .nav-left,
 .nav-right {
     display: flex;
     align-items: center;
 }
 
-/* Use auto margin to push .nav-right to the far right — works even if .nav-right is empty */
-.nav-right {
-    margin-left: auto;
-}
-
-/* Nav link styles */
-nav a,
 .nav-left a,
 .nav-right a {
     color: white;
@@ -62,176 +73,179 @@ nav a,
     font-size: 16px;
     padding: 8px 14px;
     border-radius: 4px;
-    display: inline-block;
     margin-right: 15px;
     transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap;
 }
 
-/* Remove margin for last link */
-nav a:last-child,
 .nav-left a:last-child,
 .nav-right a:last-child {
     margin-right: 0;
 }
 
-/* Hover and active effects */
-nav a:hover,
 .nav-left a:hover,
 .nav-right a:hover {
     background-color: #4CAF50;
-    color: white;
 }
 
-nav a.active {
-    text-decoration: underline;
-}
-
-/* ---------- Username + Logout ---------- */
 .username {
-    color: white;
+    color: #ddd;
     font-weight: bold;
     margin-right: 15px;
 }
 
+/* ---------- Buttons (Unified) ---------- */
+button,
+.login-form button,
+.signup-form button,
+.search-container button,
 .logout-btn {
-    background-color: #dc3545;
+    background: linear-gradient(90deg, #4CAF50, #66bb6a);
     color: white;
-    padding: 8px 14px;
-    border-radius: 5px;
-    text-decoration: none;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 16px;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
+button:hover,
+.login-form button:hover,
+.signup-form button:hover,
+.search-container button:hover,
 .logout-btn:hover {
-    background-color: #c82333;
+    background: linear-gradient(90deg, #388e3c, #4caf50);
+    transform: scale(1.05);
 }
 
-/* ---------- Page Content Centering ---------- */
+/* Logout button override */
+.logout-btn {
+    background: linear-gradient(90deg, #e53935, #ef5350);
+}
+.logout-btn:hover {
+    background: linear-gradient(90deg, #c62828, #e53935);
+    transform: scale(1.05);
+}
+
+/* ---------- Main Content ---------- */
 main {
     flex: 1;
-    padding: 40px 20px;
-    min-height: 70vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 20px;
+    text-align: center;
+    min-height: calc(100vh - 250px);
+}
+
+/* ---------- Library Section ---------- */
+.library-section {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.search-container form {
+    display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-main section {
-    max-width: 800px;
-}
-
-main h2,
-main p {
-    text-align: center;
-}
-
-/* ---------- Login Page Styling ---------- */
-.login-section {
-    background-color: #ffffff;
-    padding: 2em;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    max-width: 400px;
-    text-align: left;
-    margin-top: 40px;
-}
-
-main.login-page {
-    align-items: center;
-    justify-content: center;
-}
-
-.login-section h2 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.login-section p {
-    text-align: center;
-    color: #555;
-    margin-bottom: 20px;
-}
-
-.login-form input[type="text"],
-.login-form input[type="password"] {
-    width: 100%;
+.search-container input[type="text"] {
+    width: 60%;
     padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
+    border-radius: 6px;
     border: 1px solid #ccc;
-    border-radius: 6px;
     font-size: 15px;
+    transition: border-color 0.3s ease;
 }
 
-.login-form button {
+.search-container input[type="text"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Book Cards */
+.book-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 120px;
+}
+
+.book-item {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
     width: 100%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+    max-width: 800px;
+    margin: 0 auto;
+    word-wrap: break-word;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.login-form button:hover {
-    background-color: #45a049;
+/*.book-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}*/
+
+/* ---------- Login & Signup Pages ---------- */
+main.login-page,
+main.signup-page {
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 260px);
+    padding: 20px;
 }
 
-.signup-text {
-    text-align: center;
-    margin-top: 15px;
-}
-
-.signup-text a {
-    color: #4CAF50;
-    text-decoration: none;
-}
-
-.signup-text a:hover {
-    text-decoration: underline;
-}
-
-.error-message {
-    color: red;
-    text-align: center;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-/* ---------- Signup Page Styling ---------- */
+.login-section,
 .signup-section {
-    background-color: #ffffff;
+    background-color: #fff;
     padding: 2em;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 450px;
     text-align: left;
-    margin-top: 40px;
 }
 
-main.signup-page {
-    align-items: center;
-    justify-content: center;
-}
-
+.login-section h2,
 .signup-section h2 {
     text-align: center;
     margin-bottom: 10px;
 }
 
+.login-section p,
 .signup-section p {
     text-align: center;
     color: #555;
     margin-bottom: 20px;
 }
 
+.login-form label,
+.signup-form label {
+    font-weight: bold;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"],
 .signup-form input[type="text"],
 .signup-form input[type="password"],
 .signup-form input[type="email"] {
@@ -242,54 +256,65 @@ main.signup-page {
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 15px;
+    transition: border-color 0.3s ease;
 }
 
-.signup-form button {
-    width: 100%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+.login-form input:focus,
+.signup-form input:focus {
+    border-color: #4CAF50;
+    outline: none;
 }
 
-.signup-form button:hover {
-    background-color: #45a049;
-}
-
-.signup-section .login-text {
+.signup-text,
+.login-text {
     text-align: center;
     margin-top: 15px;
 }
 
-.signup-section .login-text a {
+.signup-text a,
+.login-text a {
     color: #4CAF50;
     text-decoration: none;
+    font-weight: bold;
 }
 
-.signup-section .login-text a:hover {
+.signup-text a:hover,
+.login-text a:hover {
     text-decoration: underline;
+}
+
+.success-message {
+    color: #28a745;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 /* ---------- Footer ---------- */
 footer {
-    background-color: #333;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #222;
     color: white;
     text-align: center;
     padding: 14px 0;
-    width: 100%;
-    position: relative;
-    bottom: 0;
     font-size: 15px;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 600px) {
-    nav,
-    nav.navbar {
+    .navbar {
         flex-direction: column;
         text-align: center;
         padding: 12px 0;
@@ -297,21 +322,55 @@ footer {
 
     .nav-right {
         margin-top: 10px;
-        margin-left: 0; /* reset for mobile */
+        margin-left: 0;
     }
 
-    nav a,
     .nav-left a,
     .nav-right a {
         margin: 8px 0;
         font-size: 15px;
     }
 
-    .logout-btn {
-        padding: 6px 12px;
-    }
-
     main {
         padding: 20px;
     }
+
+    .book-item {
+        max-width: 100%;
+    }
+
+    .search-container input[type="text"] {
+        width: 80%;
+    }
+}
+
+/* ---------- Pagination Buttons ---------- */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 30px 0 100px 0;
+}
+
+.page-btn {
+    background: linear-gradient(90deg, #4CAF50, #66bb6a);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+    background: linear-gradient(90deg, #388e3c, #4CAF50);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.page-btn:active {
+    transform: scale(0.97);
 }
