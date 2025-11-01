@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,69 +8,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summarice - Login</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .error-message {
-            color: red;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
 
-    <header>
-        <h1>Welcome to Summarice</h1>
-        <p>Log in to continue</p>
-    </header>
+<?php include 'header.php'; ?>
 
-<nav class="navbar">
-  <div class="nav-left">
-      <a href="index.php">Home</a>
-      <a href="about.php">About</a>
-      <?php if (isset($_SESSION['username']) && $_SESSION['username'] === 'admin'): ?>
-          <a href="admin_dashboard.php">Admin Dashboard</a>
-      <?php endif; ?>
-  </div>
+<main class="login-page">
+    <section class="login-section">
+        <h2>Login</h2>
+        <p>Enter your credentials to continue.</p>
 
-  <div class="nav-right">
-      <?php if (isset($_SESSION['username'])): ?>
-          <span class="username">👤 <?php echo htmlspecialchars($_SESSION['username']); ?></span>
-          <a href="logout.php" class="logout-btn">Logout</a>
-      <?php else: ?>
-          <a href="loginpage.php">Login</a>
-      <?php endif; ?>
-  </div>
-</nav>
+        <?php if (isset($_GET['error']) && $_GET['error'] === '1'): ?>
+            <p class="error-message">❌ Incorrect username or password.</p>
+        <?php elseif (isset($_GET['success']) && $_GET['success'] === '1'): ?>
+            <p class="success-message">✅ Account created successfully. You can now log in!</p>
+        <?php endif; ?>
 
-    <main>
-        <section class="login-section">
-            <h2>Login</h2>
-            <p>Enter credentials to Start Viewing.</p>
+        <form action="login.php" method="post" class="login-form">
+            <label for="email">Username:</label>
+            <input type="text" id="email" name="email" placeholder="Enter your username" required>
 
-            <?php if (isset($_GET['error']) && $_GET['error'] === '1'): ?>
-                <p class="error-message">Username or password is incorrect.</p>
-            <?php endif; ?>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-            <form action="login.php" method="post" class="login-form">
-                <label for="email">Username:</label><br>
-                <input type="text" id="email" name="email" placeholder="Enter your email or username" required><br><br>
+            <button type="submit">Login</button>
 
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required><br><br>
+            <p class="signup-text">
+                Don’t have an account? <a href="signup.php">Sign up</a>
+            </p>
+        </form>
+    </section>
+</main>
 
-                <button type="submit">Login</button>
-
-                <p class="signup-text">
-                    Don’t have an account? <a href="signup.php">Sign up</a>
-                </p>
-            </form>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 summarice website</p>
-    </footer>
+<footer>
+    <p>&copy; 2025 Summarice Website</p>
+</footer>
 
 </body>
 </html>
