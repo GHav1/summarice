@@ -1,12 +1,19 @@
 /* ---------- General Styles ---------- */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
 }
 
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- Header ---------- */
 header {
     background-color: #4CAF50;
     color: white;
@@ -14,84 +21,139 @@ header {
     text-align: center;
 }
 
+/* ---------- Navigation Bar ---------- */
+
+/* Default navbar style for all pages */
 nav {
     background-color: #333;
     overflow: hidden;
-    text-align: center;
-}
-
-nav a {
-    color: white;
-    padding: 14px 20px;
-    display: inline-block;
-    text-decoration: none;
-}
-
-nav a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-nav a.active {
-    font-weight: bold;
-    text-decoration: underline;
-}
-
-main {
-    padding: 20px;
-    min-height: 70vh;
+    padding: 18px 30px;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Navbar with left and right sections (used on all main pages) */
+nav.navbar {
+    display: flex;
+    align-items: center;
+    /* keep left items left; .nav-right will push itself to the right using margin-left:auto */
+}
+
+/* Left/right containers */
+.nav-left,
+.nav-right {
+    display: flex;
     align-items: center;
 }
 
-footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #333;
+/* Use auto margin to push .nav-right to the far right — works even if .nav-right is empty */
+.nav-right {
+    margin-left: auto;
+}
+
+/* Nav link styles */
+nav a,
+.nav-left a,
+.nav-right a {
     color: white;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-}
-
-/* ---------- Form Styles (Global) ---------- */
-form input,
-form textarea {
-    width: 100%;
-    max-width: 400px;
-    padding: 8px;
-    margin: 4px 0;
-    border: 1px solid #ccc;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 8px 14px;
     border-radius: 4px;
+    display: inline-block;
+    margin-right: 15px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-button {
+/* Remove margin for last link */
+nav a:last-child,
+.nav-left a:last-child,
+.nav-right a:last-child {
+    margin-right: 0;
+}
+
+/* Hover and active effects */
+nav a:hover,
+.nav-left a:hover,
+.nav-right a:hover {
     background-color: #4CAF50;
     color: white;
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
 }
 
-button:hover {
-    background-color: #45a049;
+nav a.active {
+    text-decoration: underline;
 }
 
-/* ---------- Login Page Specific Styles ---------- */
+/* ---------- Username + Logout ---------- */
+.username {
+    color: white;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.logout-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #c82333;
+}
+
+/* ---------- Page Content Centering ---------- */
+main {
+    flex: 1;
+    padding: 40px 20px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+main section {
+    max-width: 800px;
+}
+
+main h2,
+main p {
+    text-align: center;
+}
+
+/* ---------- Login Page Styling ---------- */
 .login-section {
-    background-color: white;
+    background-color: #ffffff;
     padding: 2em;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 400px;
     text-align: left;
+    margin-top: 40px;
+}
+
+main.login-page {
+    align-items: center;
+    justify-content: center;
 }
 
 .login-section h2 {
     text-align: center;
+    margin-bottom: 10px;
+}
+
+.login-section p {
+    text-align: center;
+    color: #555;
+    margin-bottom: 20px;
 }
 
 .login-form input[type="text"],
@@ -99,25 +161,26 @@ button:hover {
     width: 100%;
     padding: 10px;
     margin-top: 5px;
+    margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 15px;
 }
 
-.form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9em;
-    margin-top: 10px;
+.login-form button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
-.forgot-link {
-    text-decoration: none;
-    color: #4CAF50;
-}
-
-.forgot-link:hover {
-    text-decoration: underline;
+.login-form button:hover {
+    background-color: #45a049;
 }
 
 .signup-text {
@@ -134,14 +197,121 @@ button:hover {
     text-decoration: underline;
 }
 
+.error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* ---------- Signup Page Styling ---------- */
+.signup-section {
+    background-color: #ffffff;
+    padding: 2em;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 450px;
+    text-align: left;
+    margin-top: 40px;
+}
+
+main.signup-page {
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-section h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.signup-section p {
+    text-align: center;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.signup-form input[type="text"],
+.signup-form input[type="password"],
+.signup-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.signup-form button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.signup-form button:hover {
+    background-color: #45a049;
+}
+
+.signup-section .login-text {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.signup-section .login-text a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.signup-section .login-text a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Footer ---------- */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 14px 0;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    font-size: 15px;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 600px) {
-    main {
-        padding: 10px;
+    nav,
+    nav.navbar {
+        flex-direction: column;
+        text-align: center;
+        padding: 12px 0;
     }
 
-    .login-section {
-        padding: 1.5em;
-        max-width: 90%;
+    .nav-right {
+        margin-top: 10px;
+        margin-left: 0; /* reset for mobile */
+    }
+
+    nav a,
+    .nav-left a,
+    .nav-right a {
+        margin: 8px 0;
+        font-size: 15px;
+    }
+
+    .logout-btn {
+        padding: 6px 12px;
+    }
+
+    main {
+        padding: 20px;
     }
 }
