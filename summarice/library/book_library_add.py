@@ -1,6 +1,6 @@
 import mysql.connector
 import json
-import sys
+import traceback
 
 def get_books():
     try:
@@ -19,12 +19,12 @@ def get_books():
         conn.close()
         return books
     except Exception as e:
-        # Print JSON error for PHP to read
-        print(json.dumps({"error": str(e)}))
-        sys.exit(1)
+        return {"error": str(e), "trace": traceback.format_exc()}
+
 
 if __name__ == "__main__":
-    books = get_books()
-    # ✅ Always print pure JSON output (no extra text)
-    print(json.dumps(books, ensure_ascii=False))
-
+    try:
+        books = get_books()
+        print(json.dumps(books, ensure_ascii=False))
+    except Exception as e:
+        print(json.dumps({"error": str(e), "trace": traceback.format_exc()}))
