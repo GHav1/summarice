@@ -5,14 +5,14 @@ session_start();
 
 include 'header.php';
 
-// ✅ Python setup
+// Python setup
 $python_path = "D:\\1oneoneone\\Files\\APPS 001\\schoolAppsDL\\Phyton 3\\python.exe";
 $script_path = "C:\\wamp64\\www\\summarice\\library\\book_library.py";
 $command = "\"$python_path\" \"$script_path\"";
 
 $output = shell_exec($command . " 2>&1");
 
-// ✅ Log any unexpected issues
+// Log any unexpected issues
 file_put_contents(
     __DIR__ . "/debug_library.log",
     "Command:\n$command\n\nOutput:\n$output\n\n",
@@ -24,7 +24,7 @@ if (!is_array($books)) {
     $books = [];
 }
 
-// ✅ Search logic
+// Search logic
 $search = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : '';
 $filtered_books = [];
 
@@ -38,7 +38,7 @@ foreach ($books as $book) {
     }
 }
 
-// ✅ Pagination setup
+// Pagination setup
 $books_per_page = 3;
 $total_books = count($filtered_books);
 $total_pages = ceil($total_books / $books_per_page);
@@ -219,3 +219,4 @@ $paginated_books = array_slice($filtered_books, $start_index, $books_per_page);
     </footer>
 </body>
 </html>
+
