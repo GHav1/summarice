@@ -45,7 +45,7 @@ if (session_status() === PHP_SESSION_NONE) {
     background-color: #4CAF50;
     color: white;
     text-align: center;
-    padding: 18px 20px 12px 20px; /* slightly taller for balance */
+    padding: 18px 20px 12px 20px;
     margin: 0;
     z-index: 1000;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
@@ -59,7 +59,7 @@ if (session_status() === PHP_SESSION_NONE) {
 /* ---------- Navigation Bar ---------- */
 .navbar {
     position: fixed;
-    top: 95px; /* directly below header */
+    top: 95px;
     left: 0;
     width: 100%;
     background-color: #222;
@@ -67,7 +67,7 @@ if (session_status() === PHP_SESSION_NONE) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 25px; /* increased height to prevent cropping */
+    padding: 14px 25px;
     z-index: 999;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
@@ -76,7 +76,7 @@ if (session_status() === PHP_SESSION_NONE) {
 .nav-right {
     display: flex;
     align-items: center;
-    flex-wrap: wrap; /* ensures no cropping if content is wide */
+    flex-wrap: wrap; 
 }
 
 .nav-left a,
@@ -128,10 +128,10 @@ if (session_status() === PHP_SESSION_NONE) {
     background-color: #45a049;
 }
 
-/* ---------- Body Padding Fix ---------- */
+/* ---------- Body Padding ---------- */
 body {
     margin: 0;
-    padding-top: 185px; /* enough for header (95) + navbar (90) */
+    padding-top: 185px; 
     background-color: #f4f4f4;
     font-family: Arial, sans-serif;
 }
