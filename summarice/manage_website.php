@@ -35,7 +35,6 @@
 
 <main>
     <button onclick="location.href='add_book.php'">Add Book</button>
-    <!-- ✅ Fixed to open the actual Library page -->
     <button onclick="location.href='book_library.php'">View Books</button>
     <br><br>
     <button onclick="location.href='admin_dashboard.php'">Back</button>
@@ -47,3 +46,4 @@
 
 </body>
 </html>
+
