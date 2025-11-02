@@ -15,7 +15,7 @@ body {
     min-height: 100vh;
     margin: 0;
     padding-top: 125px; /* header (≈65px) + navbar (≈60px) */
-    padding-bottom: 100px; /* footer */
+    padding-bottom: 100px;
     overflow-x: hidden;
 }
 
@@ -46,7 +46,7 @@ header p {
 /* ---------- Navigation Bar ---------- */
 .navbar {
     position: fixed;
-    top: 68px; /* directly below header */
+    top: 68px;
     left: 0;
     width: 100%;
     background-color: #222;
@@ -94,7 +94,7 @@ header p {
     margin-right: 15px;
 }
 
-/* ---------- Buttons (Unified) ---------- */
+/* ---------- Buttons ---------- */
 button,
 .login-form button,
 .signup-form button,
@@ -374,3 +374,4 @@ footer {
 .page-btn:active {
     transform: scale(0.97);
 }
+
