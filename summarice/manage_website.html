@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+    <h1>Website Management</h1>
+</header>
+
+<main>
+    <button onclick="location.href='{{ url_for('add_book') }}'">Add Book</button>
+    <button onclick="location.href='{{ url_for('books') }}'">View Books</button>
+    <br><br>
+    <button onclick="location.href='{{ url_for('admin_dashboard') }}'">Back</button>
+</main>
+{% endblock %}
