@@ -1,45 +1,23 @@
-<?php
-session_start();
-if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
-    header("Location: loginpage.php");
-    exit;
-}
-
-$conn = new mysqli("localhost", "root", "", "summarice_db");
-
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    $conn->query("DELETE FROM users WHERE id=$id");
-}
-
-$result = $conn->query("SELECT * FROM users");
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Manage Accounts</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 <header><h1>Manage Accounts</h1></header>
+
 <main>
-<table border="1" cellpadding="10">
-<tr><th>ID</th><th>Full Name</th><th>Username</th><th>Actions</th></tr>
-<?php while ($row = $result->fetch_assoc()): ?>
-<tr>
-    <td><?= $row['id'] ?></td>
-    <td><?= htmlspecialchars($row['full_name']) ?></td>
-    <td><?= htmlspecialchars($row['username']) ?></td>
-    <td>
-        <a href="edit_account.php?id=<?= $row['id'] ?>">Edit</a> |
-        <a href="?delete=<?= $row['id'] ?>" onclick="return confirm('Delete this account?')">Delete</a>
-    </td>
-</tr>
-<?php endwhile; ?>
-</table>
-<br>
-<button onclick="location.href='admin_dashboard.php'">Back</button>
+    <table border="1" cellpadding="10">
+        <tr><th>Username</th><th>Role</th><th>Action</th></tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Delete this account?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <button onclick="location.href='{{ url_for('admin_dashboard') }}'">Back</button>
 </main>
-</body>
-</html>
+{% endblock %}
