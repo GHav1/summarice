@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+</header>
+
+<main class="dashboard-container">
+    <div class="admin-buttons">
+        <button onclick="location.href='{{ url_for('manage_accounts') }}'">Manage Accounts</button>
+        <button onclick="location.href='{{ url_for('manage_requests') }}'">Manage Requests</button>
+        <button onclick="location.href='{{ url_for('manage_website') }}'">Manage Website</button>
+    </div>
+</main>
+
+<footer class="dashboard-footer">
+    <p>&copy; 2025 Summarice Website</p>
+</footer>
+{% endblock %}
