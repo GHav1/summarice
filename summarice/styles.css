@@ -13,10 +13,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    margin: 0;
-    padding-top: 125px;
-    padding-bottom: 100px;
     overflow-x: hidden;
+    padding-top: 125px;
 }
 
 /* ---------- Header ---------- */
@@ -39,7 +37,7 @@ header h1 {
 }
 
 header p {
-    margin: 3px 0 0 0;
+    margin: 3px 0 0;
     font-size: 14px;
 }
 
@@ -52,22 +50,30 @@ header p {
     background-color: #222;
     color: white;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 10px 25px;
+    align-items: center;
+    padding: 10px 40px;
     z-index: 999;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    flex-wrap: nowrap;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .nav-left,
 .nav-right {
     display: flex;
     align-items: center;
+    flex-wrap: nowrap;
+}
+
+.nav-left {
+    justify-content: flex-start;
+    gap: 10px;
 }
 
 .nav-right {
-    display: flex;
-    align-items: center;
+    justify-content: flex-end;
     gap: 10px;
 }
 
@@ -79,14 +85,8 @@ header p {
     font-size: 16px;
     padding: 8px 14px;
     border-radius: 4px;
-    margin-right: 15px;
     transition: background-color 0.3s ease, color 0.3s ease;
     white-space: nowrap;
-}
-
-.nav-left a:last-child,
-.nav-right a:last-child {
-    margin-right: 0;
 }
 
 .nav-left a:hover,
@@ -97,14 +97,12 @@ header p {
 .username {
     color: #ddd;
     font-weight: bold;
-    margin-right: 15px;
 }
 
 /* ---------- Buttons ---------- */
 button,
 .login-form button,
 .signup-form button,
-.search-container button,
 .logout-btn {
     background: linear-gradient(90deg, #4CAF50, #66bb6a);
     color: white;
@@ -114,36 +112,23 @@ button,
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
     transition: all 0.3s ease;
-    letter-spacing: 0.5px;
     white-space: nowrap;
 }
 
 button:hover,
 .login-form button:hover,
-.signup-form button:hover,
-.search-container button:hover,
-.logout-btn:hover {
+.signup-form button:hover {
     background: linear-gradient(90deg, #388e3c, #4caf50);
     transform: scale(1.05);
 }
 
-
+/* Logout button (red) */
 .logout-btn {
     background: linear-gradient(90deg, #e53935, #ef5350);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 14px;
-    font-size: 15px;
-    line-height: 1;
-    white-space: nowrap;
 }
 .logout-btn:hover {
     background: linear-gradient(90deg, #c62828, #e53935);
-    transform: scale(1.05);
 }
 
 /* ---------- Main Content ---------- */
@@ -152,216 +137,9 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
     padding: 40px 20px;
     text-align: center;
     min-height: calc(100vh - 250px);
-}
-
-/* ---------- Library Page Layout ---------- */
-.library-page {
-    padding-top: 140px;
-}
-
-
-.search-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px auto 30px auto;
-    width: 100%;
-}
-
-.search-container form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    max-width: 600px;
-}
-
-.search-container input[type="text"] {
-    flex: 1;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-}
-
-.search-container input[type="text"]:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
-
-.search-container button {
-    background: linear-gradient(90deg, #4CAF50, #66bb6a);
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.search-container button:hover {
-    background: linear-gradient(90deg, #388e3c, #4CAF50);
-}
-
-/* Book cards */
-.book-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto 80px auto;
-}
-
-/* Limit to 3 book cards per page */
-.book-item {
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    width: 100%;
-    word-wrap: break-word;
-}
-
-/* Pagination styling */
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 80px;
-}
-
-.page-btn {
-    background: linear-gradient(90deg, #4CAF50, #66bb6a);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.page-btn:hover {
-    background: linear-gradient(90deg, #388e3c, #4CAF50);
-    transform: scale(1.05);
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    .search-container form {
-        flex-direction: column;
-    }
-
-    .search-container input[type="text"] {
-        width: 100%;
-    }
-
-    .book-item {
-        max-width: 100%;
-    }
-}
-
-/*.book-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}*/
-
-/* ---------- Login & Signup Pages ---------- */
-main.login-page,
-main.signup-page {
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 260px);
-    padding: 20px;
-}
-
-.login-section,
-.signup-section {
-    background-color: #fff;
-    padding: 2em;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    max-width: 450px;
-    text-align: left;
-}
-
-.login-section h2,
-.signup-section h2 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.login-section p,
-.signup-section p {
-    text-align: center;
-    color: #555;
-    margin-bottom: 20px;
-}
-
-.login-form label,
-.signup-form label {
-    font-weight: bold;
-}
-
-.login-form input[type="text"],
-.login-form input[type="password"],
-.signup-form input[type="text"],
-.signup-form input[type="password"],
-.signup-form input[type="email"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-    transition: border-color 0.3s ease;
-}
-
-.login-form input:focus,
-.signup-form input:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
-
-.signup-text,
-.login-text {
-    text-align: center;
-    margin-top: 15px;
-}
-
-.signup-text a,
-.login-text a {
-    color: #4CAF50;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.signup-text a:hover,
-.login-text a:hover {
-    text-decoration: underline;
-}
-
-.success-message {
-    color: #28a745;
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.error-message {
-    color: #dc3545;
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 10px;
 }
 
 /* ---------- Footer ---------- */
@@ -379,120 +157,211 @@ footer {
     z-index: 1000;
 }
 
-/* ---------- Admin Dashboard Styles ---------- */
+/* ---------- Login & Signup ---------- */
+.login-section,
+.signup-section {
+    background-color: #fff;
+    padding: 2em;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 450px;
+    text-align: left;
+}
+
+.login-section h2,
+.signup-section h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Inputs */
+.login-form input,
+.signup-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+.login-form input:focus,
+.signup-form input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* ---------- Tables (Manage Accounts, Books, etc.) ---------- */
+table {
+    border-collapse: collapse;
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+}
+th {
+    background-color: #43a047;
+    color: white;
+}
+
+/* ---------- Admin Dashboard ---------- */
 .dashboard-header {
     text-align: center;
     background: linear-gradient(90deg, #43a047, #66bb6a);
     color: white;
     padding: 20px 0;
-    border-radius: 0 0 10px 10px;
     margin-bottom: 40px;
-}
-
-.dashboard-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 50vh;
 }
 
 .admin-buttons {
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 25px;
     flex-wrap: wrap;
 }
 
 .admin-buttons button {
-    background: linear-gradient(90deg, #4CAF50, #66bb6a);
-    border: none;
     padding: 14px 28px;
     border-radius: 8px;
     font-size: 17px;
     font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: all 0.25s ease;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-.admin-buttons button:hover {
-    background: linear-gradient(90deg, #388e3c, #4caf50);
-    transform: scale(1.05);
+/* ---------- Book Library ---------- */
+.library-section {
+    padding: 60px 8%;
+    text-align: center;
 }
 
-.dashboard-footer {
-    text-align: center;
-    margin-top: 60px;
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.library-header h2 {
+    font-size: 28px;
+    color: #222;
+    margin: 10px 0;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+}
+
+.search-form input {
+    padding: 8px 12px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    width: 250px;
+    font-size: 15px;
+}
+
+.search-form button {
+    padding: 8px 16px;
+    background: #0a74da;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.search-form button:hover {
+    background: #095ab8;
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    justify-items: center;
+}
+
+.book-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 300px;
+    text-align: left;
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+}
+
+.book-cover img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.book-info h3 {
+    font-size: 20px;
+    margin: 10px 0 6px;
+    color: #222;
+}
+
+.book-info p {
+    margin: 3px 0;
     color: #555;
     font-size: 14px;
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 600px) {
-    .navbar {
-        flex-direction: column;
-        text-align: center;
-        padding: 12px 0;
-    }
-
-    .nav-right {
-        margin-top: 10px;
-        margin-left: 0;
-    }
-
-    .nav-left a,
-    .nav-right a {
-        margin: 8px 0;
-        font-size: 15px;
-    }
-
-    main {
-        padding: 20px;
-    }
-
-    .book-item {
-        max-width: 100%;
-    }
-
-    .search-container input[type="text"] {
-        width: 80%;
-    }
-
-    .admin-buttons {
-        flex-direction: column;
-        gap: 15px;
-    }
-}
-
-/* ---------- Pagination Buttons ---------- */
 .pagination {
+    margin-top: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
-    margin: 30px 0 100px 0;
 }
 
 .page-btn {
-    background: linear-gradient(90deg, #4CAF50, #66bb6a);
+    padding: 8px 16px;
+    background: #0a74da;
     color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
+    border-radius: 6px;
     text-decoration: none;
-    font-weight: bold;
-    font-size: 16px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
+    transition: background 0.3s;
 }
 
 .page-btn:hover {
-    background: linear-gradient(90deg, #388e3c, #4CAF50);
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    background: #095ab8;
 }
 
-.page-btn:active {
-    transform: scale(0.97);
+.no-books {
+    margin-top: 50px;
+    color: #777;
+    font-size: 18px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 950px) {
+    .navbar {
+        flex-direction: column;
+        padding: 10px 0;
+        text-align: center;
+    }
+    .nav-right {
+        margin-top: 10px;
+    }
+    .nav-left a,
+    .nav-right a {
+        margin: 5px 10px;
+    }
+    main {
+        padding-top: 180px;
+    }
 }
