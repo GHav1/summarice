@@ -125,39 +125,49 @@ def delete_account(user_id):
 # ---------- Book Library ----------
 @app.route("/books")
 def books():
+    search = request.args.get("search", "").strip()
+    page = int(request.args.get("page", 1))
+    per_page = 3
+    offset = (page - 1) * per_page
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM books")
+
+    # --- Count total books ---
+    if search:
+        cursor.execute("""
+            SELECT COUNT(*) AS total 
+            FROM books 
+            WHERE book_name LIKE %s OR author_name LIKE %s
+        """, (f"%{search}%", f"%{search}%"))
+    else:
+        cursor.execute("SELECT COUNT(*) AS total FROM books")
+
+    total_books = cursor.fetchone()["total"]
+    total_pages = (total_books + per_page - 1) // per_page
+
+    # --- Fetch books ---
+    if search:
+        cursor.execute("""
+            SELECT * FROM books 
+            WHERE book_name LIKE %s OR author_name LIKE %s 
+            LIMIT %s OFFSET %s
+        """, (f"%{search}%", f"%{search}%", per_page, offset))
+    else:
+        cursor.execute("SELECT * FROM books LIMIT %s OFFSET %s", (per_page, offset))
+
     books = cursor.fetchall()
+
     cursor.close()
     conn.close()
-    return render_template("book_library.html", books=books)
 
-
-# ---------- Add Book ----------
-@app.route("/add_book", methods=["GET", "POST"])
-def add_book():
-    if session.get("role") != "admin":
-        return redirect(url_for("login"))
-
-    if request.method == "POST":
-        title = request.form.get("title")
-        author = request.form.get("author")
-        content = request.form.get("content")
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO books (book_name, author_name, content) VALUES (%s, %s, %s)",
-            (title, author, content),
-        )
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        return redirect(url_for("books"))
-
-    return render_template("add_book.html")
+    return render_template(
+        "book_library.html",
+        books=books,
+        page=page,
+        total_pages=total_pages,
+        search=search
+    )
 
 
 # ---------- Manage Requests ----------
@@ -166,6 +176,7 @@ def manage_requests():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
     return render_template("manage_requests.html")
+
 
 # ---------- Manage Website ----------
 @app.route("/manage_website")
