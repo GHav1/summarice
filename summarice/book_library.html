@@ -1,40 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-<header><h1>Book Library</h1></header>
+<section class="library-section">
+    <div class="library-header">
+        <h2>Book Library</h2>
+        <form action="{{ url_for('books') }}" method="get" class="search-form">
+            <input type="text" name="search" placeholder="Search by book title or author..." value="{{ search }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
-<main>
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>Book Title</th>
-            <th>Author</th>
-            <th>Content</th>
-            {% if session.get('role') == 'admin' %}
-                <th>Action</th>
+    {% if books %}
+        <div class="book-grid">
+            {% for book in books %}
+                <div class="book-card">
+                    <div class="book-cover">
+                        <img src="{{ book.book_cover or url_for('static', filename='images/default_book.png') }}" alt="{{ book.book_name }}">
+                    </div>
+                    <div class="book-info">
+                        <h3>{{ book.book_name }}</h3>
+                        <p><strong>Author:</strong> {{ book.author_name }}</p>
+                        <p><strong>Genre:</strong> {{ book.genre }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('books', page=page-1, search=search) }}" class="page-btn">Previous</a>
             {% endif %}
-        </tr>
 
-        {% for book in books %}
-        <tr>
-            <td>{{ book.book_name }}</td>
-            <td>{{ book.author_name }}</td>
-            <td>{{ book.content }}</td>
-            {% if session.get('role') == 'admin' %}
-            <td>
-                <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post" style="display:inline;">
-                    <button type="submit" onclick="return confirm('Delete this book?')">Delete</button>
-                </form>
-            </td>
+            <span>Page {{ page }} of {{ total_pages }}</span>
+
+            {% if page < total_pages %}
+                <a href="{{ url_for('books', page=page+1, search=search) }}" class="page-btn">Next</a>
             {% endif %}
-        </tr>
-        {% endfor %}
-    </table>
+        </div>
 
-    {% if session.get('role') == 'admin' %}
-        <br>
-        <button onclick="location.href='{{ url_for('add_book') }}'">Add Book</button>
+    {% else %}
+        <p class="no-books">No books found.</p>
     {% endif %}
-
-    <br><br>
-    <button onclick="location.href='{{ url_for('index') }}'">Back</button>
-</main>
+</section>
 {% endblock %}
