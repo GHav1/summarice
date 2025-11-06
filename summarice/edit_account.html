@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="signup-section">
+    <h2>Edit Account</h2>
+
+    <form method="post">
+        <label>Full Name:</label>
+        <input type="text" name="full_name" value="{{ user.full_name }}" required><br><br>
+
+        <label>Password:</label>
+        <input type="text" name="password" value="{{ user.password }}" required><br><br>
+
+        <label>Role:</label>
+        <select name="role">
+            <option value="user" {% if user.role=='user' %}selected{% endif %}>User</option>
+            <option value="admin" {% if user.role=='admin' %}selected{% endif %}>Admin</option>
+        </select><br><br>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <br>
+    <button onclick="location.href='{{ url_for('manage_accounts') }}'">Back</button>
+</section>
+{% endblock %}
