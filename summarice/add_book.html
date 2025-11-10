@@ -1,21 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<header><h1>Add a New Book</h1></header>
-
 <main>
-    <form action="{{ url_for('add_book') }}" method="post">
-        <label for="book_name">Book Name:</label><br>
-        <input type="text" id="book_name" name="book_name" required><br><br>
 
-        <label for="author_name">Author:</label><br>
-        <input type="text" id="author_name" name="author_name" required><br><br>
+    <section class="add-book-section">
+        <h2>Add a New Book</h2>
 
-        <label for="content">Content:</label><br>
-        <textarea id="content" name="content" rows="5" cols="50" required></textarea><br><br>
+        <form method="POST" class="add-book-form">
+            
+            <label>Book Name:</label>
+            <input type="text" name="book_name" placeholder="Enter book title" required>
 
-        <button type="submit">Add Book</button>
-    </form>
-    <br>
-    <button onclick="location.href='{{ url_for('manage_website') }}'">Back</button>
+            <label>Author Name:</label>
+            <input type="text" name="author_name" placeholder="Enter author name" required>
+
+            <label>Content:</label>
+            <textarea name="content" placeholder="Enter book content / summary" required></textarea>
+
+            <button type="submit">Add Book</button>
+        </form>
+
+        <button onclick="history.back()" class="back-btn">Back</button>
+    </section>
+
 </main>
 {% endblock %}
