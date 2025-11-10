@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+  <section class="slider-verification-section">
+    <h2>Slide to Verify</h2>
+    <p>Complete this step to finish your registration.</p>
+
+    <div id="slider-container">
+      <div id="slider">
+        <span id="slider-handle">→</span>
+      </div>
+      <span id="slider-text">Slide Right</span>
+    </div>
+
+    <form method="POST" action="{{ url_for('slider_verification') }}">
+      <input type="hidden" id="verified" name="verified" value="false">
+      <div class="form-buttons">
+        <button type="submit" id="register-btn" class="submit-btn" disabled>Finish Registration</button>
+        <button type="button" class="back-btn" onclick="history.back()">Back</button>
+        <a href="{{ url_for('login') }}" class="cancel-btn">Cancel Registration</a>
+      </div>
+    </form>
+  </section>
+</main>
+
+<style>
+  .slider-verification-section {
+    background-color: white;
+    padding: 2em;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    margin: 60px auto;
+    text-align: center;
+  }
+
+  #slider-container {
+    position: relative;
+    width: 300px;
+    height: 50px;
+    background: #ddd;
+    border-radius: 25px;
+    overflow: hidden;
+    margin: 25px auto;
+  }
+
+  /* progress fill */
+  #slider-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #66bb6a, #4CAF50);
+    border-radius: 25px;
+    transition: width 0.1s linear;
+    z-index: 1;
+  }
+
+  /* handle */
+  #slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 50px;
+    background: green;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s;
+    z-index: 2;
+  }
+
+  /* text inside bar */
+  #slider-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: #333;
+    font-weight: bold;
+    line-height: 50px;
+    z-index: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .form-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .submit-btn {
+    background: linear-gradient(90deg, #4CAF50, #66bb6a);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 70%;
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .back-btn, .cancel-btn {
+    width: 70%;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+
+  .back-btn {
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+  }
+
+  .back-btn:hover {
+    background-color: #bbb;
+  }
+
+  .cancel-btn {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .cancel-btn:hover {
+    background-color: #c0392b;
+  }
+</style>
+
+<script>
+  const slider = document.getElementById('slider');
+  const sliderText = document.getElementById('slider-text');
+  const sliderProgress = document.createElement('div');
+  const registerBtn = document.getElementById('register-btn');
+  const verifiedInput = document.getElementById('verified');
+  const container = document.getElementById('slider-container');
+
+  // create progress element
+  sliderProgress.id = 'slider-progress';
+  container.insertBefore(sliderProgress, slider);
+
+  let isDragging = false;
+  let startX = 0, offsetX = 0, maxOffset = container.offsetWidth - slider.offsetWidth;
+
+  slider.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    offsetX = Math.min(Math.max(0, e.clientX - startX), maxOffset);
+    slider.style.transform = `translateX(${offsetX}px)`;
+    sliderProgress.style.width = `${(offsetX / maxOffset) * 100}%`;
+
+    if (offsetX >= maxOffset) {
+      isDragging = false;
+      sliderText.textContent = 'Verified ✔️';
+      slider.style.background = '#4CAF50';
+      registerBtn.disabled = false;
+      verifiedInput.value = 'true';
+      sliderProgress.style.width = '100%';
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    if (offsetX < maxOffset) {
+      slider.style.transform = `translateX(0px)`;
+      sliderProgress.style.width = '0';
+    }
+    isDragging = false;
+  });
+</script>
+{% endblock %}
