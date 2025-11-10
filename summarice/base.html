@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summarice - {{ title or "Home" }}</title>
+
+    <!-- Icon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/summarice.ico') }}">
+
+    <!-- Main site styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Page-specific CSS block -->
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
     {% include 'header.html' %}
 
-    <main>
+    <main class="main-container">
         {% block content %}{% endblock %}
     </main>
 
@@ -18,5 +26,7 @@
         <p>&copy; 2025 Summarice Website</p>
     </footer>
 
+    <!-- Page-specific JS block -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
