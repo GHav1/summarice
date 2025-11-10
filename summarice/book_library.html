@@ -2,12 +2,17 @@
 
 {% block content %}
 <main class="library-container">
-    <h2>Library</h2>
+    <h2 class="library-header">Library</h2>
 
     <!-- Search Bar -->
     <form method="get" action="{{ url_for('books') }}" class="search-form">
-        <input type="text" name="search" placeholder="Search a book..." value="{{ search }}">
-        <button type="submit">Search</button>
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search a book..." 
+            value="{{ search }}" 
+            class="search-input">
+        <button type="submit" class="search-btn">Search</button>
     </form>
 
     <!-- Book Cards -->
@@ -15,9 +20,9 @@
         {% if books %}
             {% for book in books %}
                 <div class="book-card">
-                    <div class="book-title">{{ book.book_name }}</div>
-                    <div class="book-author">by {{ book.author_name }}</div>
-                    <div class="book-desc">{{ book.content }}</div>
+                    <h3 class="book-title">{{ book.book_name }}</h3>
+                    <p class="book-author">by {{ book.author_name }}</p>
+                    <p class="book-desc">{{ book.content }}</p>
                 </div>
             {% endfor %}
         {% else %}
@@ -28,15 +33,15 @@
     <!-- Pagination -->
     <div class="pagination">
         {% if page > 1 %}
-            <a href="{{ url_for('books', page=page-1, search=search) }}">Previous</a>
+            <a href="{{ url_for('books', page=page-1, search=search) }}" class="pagination-btn">⟵ Previous</a>
         {% else %}
-            <button class="disabled" disabled>Previous</button>
+            <button class="pagination-btn disabled" disabled>⟵ Previous</button>
         {% endif %}
 
         {% if page < total_pages %}
-            <a href="{{ url_for('books', page=page+1, search=search) }}">Next</a>
+            <a href="{{ url_for('books', page=page+1, search=search) }}" class="pagination-btn">Next ⟶</a>
         {% else %}
-            <button class="disabled" disabled>Next</button>
+            <button class="pagination-btn disabled" disabled>Next ⟶</button>
         {% endif %}
     </div>
 
