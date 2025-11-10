@@ -1,24 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from database import get_db_connection
 import mysql.connector
 
 app = Flask(__name__)
 app.secret_key = "randomizerz"
 
-
-# ---------- Home ----------
+# ---------- HOME ----------
 @app.route("/")
 def index():
     return render_template("index.html", title="Home")
 
 
-# ---------- About ----------
+# ---------- ABOUT ----------
 @app.route("/about")
 def about():
     return render_template("about.html", title="About")
 
 
-# ---------- Login ----------
+# ---------- LOGIN ----------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -33,30 +32,27 @@ def login():
         conn.close()
 
         if user and password == user["password"]:
-            # Store user info in session
             session["username"] = user["username"]
             session["fullname"] = user["full_name"]
             session["role"] = user["role"]
 
-            # Redirect based on role
             if user["role"] == "admin":
                 return redirect(url_for("admin_dashboard"))
-            else:
-                return redirect(url_for("index"))
+            return redirect(url_for("index"))
         else:
             return render_template("loginpage.html", error="Invalid username or password")
 
     return render_template("loginpage.html")
 
 
-# ---------- Logout ----------
+# ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
 
 
-# ---------- Signup ----------
+# ---------- SIGNUP ----------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -68,22 +64,49 @@ def signup():
         if password != confirm:
             return render_template("signup.html", error="Passwords do not match")
 
+        # Temporarily save info for verification
+        session["signup_data"] = {
+            "fullname": fullname,
+            "username": username,
+            "password": password
+        }
+
+        # Redirect to slider verification
+        return redirect(url_for("slider_verification"))
+
+    return render_template("signup.html")
+
+
+# ---------- SLIDER VERIFICATION ----------
+@app.route("/slider_verification", methods=["GET", "POST"])
+def slider_verification():
+    if request.method == "POST":
+        signup_data = session.get("signup_data")
+
+        if not signup_data:
+            flash("Session expired. Please register again.")
+            return redirect(url_for("signup"))
+
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO users (full_name, username, password, role) VALUES (%s, %s, %s, %s)",
-            (fullname, username, password, "user"),
+            (signup_data["fullname"], signup_data["username"], signup_data["password"], "user")
         )
         conn.commit()
         cursor.close()
         conn.close()
 
+        # Clear session after successful registration
+        session.pop("signup_data", None)
+
+        flash("Registration successful! Please log in.")
         return redirect(url_for("login"))
 
-    return render_template("signup.html")
+    return render_template("slider_verification.html", title="Verification")
 
 
-# ---------- Admin Dashboard ----------
+# ---------- ADMIN DASHBOARD ----------
 @app.route("/admin")
 def admin_dashboard():
     if session.get("role") != "admin":
@@ -91,7 +114,7 @@ def admin_dashboard():
     return render_template("admin_dashboard.html", title="Admin Dashboard")
 
 
-# ---------- Manage Accounts ----------
+# ---------- MANAGE ACCOUNTS ----------
 @app.route("/manage_accounts")
 def manage_accounts():
     if session.get("role") != "admin":
@@ -121,6 +144,7 @@ def delete_account(user_id):
 
     return redirect(url_for("manage_accounts"))
 
+
 @app.route("/edit_account/<int:user_id>", methods=["GET", "POST"])
 def edit_account(user_id):
     if session.get("role") != "admin":
@@ -138,7 +162,6 @@ def edit_account(user_id):
             UPDATE users SET full_name=%s, password=%s, role=%s WHERE id=%s
         """, (full_name, password, role, user_id))
         conn.commit()
-
         cursor.close()
         conn.close()
         return redirect(url_for("manage_accounts"))
@@ -151,7 +174,7 @@ def edit_account(user_id):
     return render_template("edit_account.html", user=user)
 
 
-# ---------- Book Library ----------
+# ---------- BOOK LIBRARY ----------
 @app.route("/books")
 def books():
     search = request.args.get("search", "").strip()
@@ -162,7 +185,6 @@ def books():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # --- Count total books ---
     if search:
         cursor.execute("""
             SELECT COUNT(*) AS total 
@@ -175,7 +197,6 @@ def books():
     total_books = cursor.fetchone()["total"]
     total_pages = (total_books + per_page - 1) // per_page
 
-    # --- Fetch books ---
     if search:
         cursor.execute("""
             SELECT * FROM books 
@@ -186,7 +207,6 @@ def books():
         cursor.execute("SELECT * FROM books LIMIT %s OFFSET %s", (per_page, offset))
 
     books = cursor.fetchall()
-
     cursor.close()
     conn.close()
 
@@ -200,7 +220,7 @@ def books():
     )
 
 
-# ---------- Manage Requests ----------
+# ---------- MANAGE REQUESTS ----------
 @app.route("/manage_requests")
 def manage_requests():
     if session.get("role") != "admin":
@@ -208,14 +228,15 @@ def manage_requests():
     return render_template("manage_requests.html", title="Manage Requests")
 
 
-# ---------- Manage Website ----------
+# ---------- MANAGE WEBSITE ----------
 @app.route("/manage_website")
 def manage_website():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
     return render_template("manage_website.html", title="Manage Website")
 
-# Add Book
+
+# ---------- ADD BOOK ----------
 @app.route("/add_book", methods=["GET", "POST"])
 def add_book():
     if session.get("role") != "admin":
@@ -224,7 +245,7 @@ def add_book():
     if request.method == "POST":
         book_name = request.form.get("book_name")
         author_name = request.form.get("author_name")
-        content = request.form.get("content") 
+        content = request.form.get("content")
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -236,11 +257,49 @@ def add_book():
         cursor.close()
         conn.close()
 
-        return redirect(url_for("books")) 
+        return redirect(url_for("books"))
+
     return render_template("add_book.html", title="Add Book")
 
 
+# ---------- EDIT BOOKS ----------
+@app.route("/edit_books", methods=["GET", "POST"])
+def edit_books():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
 
-# ---------- Run ----------
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    if request.method == "POST":
+        book_id = request.form.get("book_id")
+        book_name = request.form.get("book_name")
+        author_name = request.form.get("author_name")
+        content = request.form.get("content")
+
+        cursor.execute("""
+            UPDATE books
+            SET book_name = %s, author_name = %s, content = %s
+            WHERE id = %s
+        """, (book_name, author_name, content, book_id))
+        conn.commit()
+
+    search = request.args.get("search", "").strip()
+    if search:
+        cursor.execute("""
+            SELECT * FROM books
+            WHERE book_name LIKE %s OR author_name LIKE %s
+        """, (f"%{search}%", f"%{search}%"))
+    else:
+        cursor.execute("SELECT * FROM books")
+
+    books = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template("edit_books.html", books=books, title="Edit Books", search=search)
+
+
+# ---------- RUN ----------
 if __name__ == "__main__":
     app.run(debug=True)
