@@ -1,44 +1,47 @@
 {% extends "base.html" %}
-{% block content %}
-<section class="library-section">
-    <div class="library-header">
-        <h2>Book Library</h2>
-        <form action="{{ url_for('books') }}" method="get" class="search-form">
-            <input type="text" name="search" placeholder="Search by book title or author..." value="{{ search }}">
-            <button type="submit">Search</button>
-        </form>
-    </div>
 
-    {% if books %}
-        <div class="book-grid">
+{% block content %}
+<main class="library-container">
+    <h2>Library</h2>
+
+    <!-- Search Bar -->
+    <form method="get" action="{{ url_for('books') }}" class="search-form">
+        <input type="text" name="search" placeholder="Search a book..." value="{{ search }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Book Cards -->
+    <div class="book-list">
+        {% if books %}
             {% for book in books %}
                 <div class="book-card">
-                    <div class="book-cover">
-                        <img src="{{ book.book_cover or url_for('static', filename='images/default_book.png') }}" alt="{{ book.book_name }}">
-                    </div>
-                    <div class="book-info">
-                        <h3>{{ book.book_name }}</h3>
-                        <p><strong>Author:</strong> {{ book.author_name }}</p>
-                        <p><strong>Genre:</strong> {{ book.genre }}</p>
-                    </div>
+                    <div class="book-title">{{ book.book_name }}</div>
+                    <div class="book-author">by {{ book.author_name }}</div>
+                    <div class="book-desc">{{ book.content }}</div>
                 </div>
             {% endfor %}
-        </div>
+        {% else %}
+            <p>No books found.</p>
+        {% endif %}
+    </div>
 
-        <div class="pagination">
-            {% if page > 1 %}
-                <a href="{{ url_for('books', page=page-1, search=search) }}" class="page-btn">Previous</a>
-            {% endif %}
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('books', page=page-1, search=search) }}">Previous</a>
+        {% else %}
+            <button class="disabled" disabled>Previous</button>
+        {% endif %}
 
-            <span>Page {{ page }} of {{ total_pages }}</span>
+        {% if page < total_pages %}
+            <a href="{{ url_for('books', page=page+1, search=search) }}">Next</a>
+        {% else %}
+            <button class="disabled" disabled>Next</button>
+        {% endif %}
+    </div>
 
-            {% if page < total_pages %}
-                <a href="{{ url_for('books', page=page+1, search=search) }}" class="page-btn">Next</a>
-            {% endif %}
-        </div>
-
-    {% else %}
-        <p class="no-books">No books found.</p>
-    {% endif %}
-</section>
+    <div class="page-info">
+        Page {{ page }} of {{ total_pages }}
+    </div>
+</main>
 {% endblock %}
