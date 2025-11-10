@@ -1,9 +1,27 @@
 {% extends "base.html" %}
+
 {% block content %}
 <section class="home-section">
+    <style>
+        .center-logo {
+            width: 300px; 
+            height: auto;
+            display: block; 
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+    
     <h2>Welcome to Summarice</h2>
     <p>
+        <img class="center-logo" src="static/images/summarice.jpg" alt="Summarice Logo">
+    </p>
+    <p>
         This website is called Summarice where books are simply summarized for a quick read about the book.
+        <br> Summarice aims to encourage the users to buy the book by providing a quick summary to entice the user.
+        <br> CCreate an account to Request for a summary of a book.
     </p>
 </section>
 {% endblock %}
