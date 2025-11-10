@@ -1,31 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="signup-section">
-    <h2>Create Your Summarice Account</h2>
-    <p>Fill in the details below to create your account.</p>
+<main>
+    <section class="signup-section">
+        <h2>Create Your Summarice Account</h2>
+        <p>Fill in the details below to create your account.</p>
 
-    {% if error %}
-        <p class="error-message">{{ error }}</p>
-    {% endif %}
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
 
-    <form action="{{ url_for('signup') }}" method="post" class="signup-form">
-        <label for="fullname">Full Name:</label><br>
-        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required><br><br>
+        <!-- Signup Form -->
+        <form action="{{ url_for('signup') }}" method="post" class="signup-form" id="signupForm">
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
 
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" placeholder="Enter a username" required><br><br>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter a username" required>
 
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-        <label for="confirm">Confirm Password:</label><br>
-        <input type="password" id="confirm" name="confirm" placeholder="Re-enter your password" required><br><br>
+            <label for="confirm">Confirm Password:</label>
+            <input type="password" id="confirm" name="confirm" placeholder="Re-enter your password" required>
 
-        <button type="submit">Register</button>
+            <div class="form-buttons">
+                <button type="submit" class="submit-btn" id="registerBtn">Register</button>
+                <button type="button" class="back-btn" onclick="history.back()">Back</button>
+            </div>
 
-        <p class="login-text">
-            Already have an account? <a href="{{ url_for('login') }}">Login here</a>
-        </p>
-    </form>
-</section>
+            <p class="login-text">
+                Already have an account? 
+                <a href="{{ url_for('login') }}">Login here</a>
+            </p>
+        </form>
+    </section>
+</main>
+
+<!-- Validation for same pass -->
+<script>
+document.getElementById('signupForm').addEventListener('submit', function (event) {
+    const password = document.getElementById('password').value.trim();
+    const confirm = document.getElementById('confirm').value.trim();
+
+    if (password !== confirm) {
+        event.preventDefault();
+        alert('Passwords do not match. Please try again.');
+    }
+});
+</script>
 {% endblock %}
