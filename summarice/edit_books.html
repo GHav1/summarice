@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 style="text-align:center; margin-top:20px;">Edit Books</h1>
+
+<!-- Search Bar -->
+<form method="get" action="{{ url_for('edit_books') }}" style="text-align:center; margin-top:15px;">
+    <input 
+        type="text" 
+        name="search" 
+        placeholder="Search by title or author..." 
+        value="{{ search }}" 
+        style="width:300px; padding:8px;"
+    >
+    <button 
+        type="submit" 
+        style="background-color:#007BFF; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;"
+    >
+        🔍 Search
+    </button>
+</form>
+
+<div style="max-width:900px; margin:30px auto;">
+    {% for book in books %}
+    <div 
+        id="book-card-{{ book.id }}" 
+        style="border:1px solid #ccc; border-radius:10px; padding:20px; margin-bottom:20px; background-color:#fafafa;"
+    >
+        <form method="POST" action="{{ url_for('edit_books') }}" id="form-{{ book.id }}">
+            <input type="hidden" name="book_id" value="{{ book.id }}">
+
+            <div id="view-mode-{{ book.id }}">
+                <h2>{{ book.book_name }}</h2>
+                <p><strong>Author:</strong> {{ book.author_name }}</p>
+                <p>{{ book.content[:200] }}{% if book.content|length > 200 %}...{% endif %}</p>
+                <button 
+                    type="button" 
+                    onclick="enableEdit({{ book.id }})"
+                    style="background-color:#007BFF; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;"
+                >
+                    ✏️ Edit
+                </button>
+            </div>
+
+            <div id="edit-mode-{{ book.id }}" style="display:none;">
+                <label><strong>Book Title:</strong></label><br>
+                <input 
+                    type="text" 
+                    name="book_name" 
+                    value="{{ book.book_name }}" 
+                    style="width:100%; padding:8px; margin-bottom:10px;"
+                ><br>
+
+                <label><strong>Author:</strong></label><br>
+                <input 
+                    type="text" 
+                    name="author_name" 
+                    value="{{ book.author_name }}" 
+                    style="width:100%; padding:8px; margin-bottom:10px;"
+                ><br>
+
+                <label><strong>Content:</strong></label><br>
+                <textarea 
+                    name="content" 
+                    rows="5" 
+                    style="width:100%; padding:8px; margin-bottom:10px;"
+                >{{ book.content }}</textarea><br>
+
+                <div style="margin-top:10px;">
+                    <button 
+                        type="submit" 
+                        style="background-color:green; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-right:10px;"
+                    >
+                        💾 Save
+                    </button>
+
+                    <button 
+                        type="button" 
+                        onclick="cancelEdit({{ book.id }})"
+                        style="background-color:#dc3545; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;"
+                    >
+                        ❌ Cancel
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <p style="text-align:center;">No books found.</p>
+    {% endfor %}
+</div>
+
+<script>
+function enableEdit(bookId) {
+    document.getElementById("view-mode-" + bookId).style.display = "none";
+    document.getElementById("edit-mode-" + bookId).style.display = "block";
+}
+
+function cancelEdit(bookId) {
+    document.getElementById("edit-mode-" + bookId).style.display = "none";
+    document.getElementById("view-mode-" + bookId).style.display = "block";
+}
+</script>
+{% endblock %}
