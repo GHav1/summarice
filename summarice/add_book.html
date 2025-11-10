@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <main>
-
+    
     <section class="add-book-section">
         <h2>Add a New Book</h2>
 
         <form method="POST" class="add-book-form">
-            
             <label>Book Name:</label>
             <input type="text" name="book_name" placeholder="Enter book title" required>
 
@@ -16,11 +15,11 @@
             <label>Content:</label>
             <textarea name="content" placeholder="Enter book content / summary" required></textarea>
 
-            <button type="submit">Add Book</button>
+            <div class="form-buttons">
+                <button type="submit" class="submit-btn">Add Book</button>
+                <button type="button" class="back-btn" onclick="history.back()">Back</button>
+            </div>
         </form>
-
-        <button onclick="history.back()" class="back-btn">Back</button>
     </section>
-
 </main>
 {% endblock %}
