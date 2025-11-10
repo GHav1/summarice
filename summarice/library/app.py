@@ -9,13 +9,13 @@ app.secret_key = "randomizerz"
 # ---------- Home ----------
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", title="Home")
 
 
 # ---------- About ----------
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return render_template("about.html", title="About")
 
 
 # ---------- Login ----------
@@ -88,7 +88,7 @@ def signup():
 def admin_dashboard():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
-    return render_template("admin_dashboard.html")
+    return render_template("admin_dashboard.html", title="Admin Dashboard")
 
 
 # ---------- Manage Accounts ----------
@@ -104,7 +104,7 @@ def manage_accounts():
     cursor.close()
     conn.close()
 
-    return render_template("manage_accounts.html", users=users)
+    return render_template("manage_accounts.html", users=users, title="Manage Accounts")
 
 
 @app.route("/delete_account/<int:user_id>")
@@ -120,6 +120,35 @@ def delete_account(user_id):
     conn.close()
 
     return redirect(url_for("manage_accounts"))
+
+@app.route("/edit_account/<int:user_id>", methods=["GET", "POST"])
+def edit_account(user_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    if request.method == "POST":
+        full_name = request.form.get("full_name")
+        password = request.form.get("password")
+        role = request.form.get("role")
+
+        cursor.execute("""
+            UPDATE users SET full_name=%s, password=%s, role=%s WHERE id=%s
+        """, (full_name, password, role, user_id))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return redirect(url_for("manage_accounts"))
+
+    cursor.execute("SELECT * FROM users WHERE id=%s", (user_id,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    return render_template("edit_account.html", user=user)
 
 
 # ---------- Book Library ----------
@@ -163,6 +192,7 @@ def books():
 
     return render_template(
         "book_library.html",
+        title="Book Library",
         books=books,
         page=page,
         total_pages=total_pages,
@@ -175,7 +205,7 @@ def books():
 def manage_requests():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
-    return render_template("manage_requests.html")
+    return render_template("manage_requests.html", title="Manage Requests")
 
 
 # ---------- Manage Website ----------
@@ -183,7 +213,32 @@ def manage_requests():
 def manage_website():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
-    return render_template("manage_website.html")
+    return render_template("manage_website.html", title="Manage Website")
+
+# Add Book
+@app.route("/add_book", methods=["GET", "POST"])
+def add_book():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        book_name = request.form.get("book_name")
+        author_name = request.form.get("author_name")
+        content = request.form.get("content") 
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO books (book_name, author_name, content)
+            VALUES (%s, %s, %s)
+        """, (book_name, author_name, content))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for("books")) 
+    return render_template("add_book.html", title="Add Book")
+
 
 
 # ---------- Run ----------
