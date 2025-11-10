@@ -1,0 +1,497 @@
+/* =========================
+   0. GLOBAL
+   ========================= */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Prevent content from hiding behind fixed header/footer */
+body {
+    padding-top: 125px;  /* Header + Navbar height */
+    padding-bottom: 80px; /* Footer height */
+}
+
+/* =========================
+   1. HEADER
+   ========================= */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #43a047, #66bb6a);
+    color: white;
+    text-align: center;
+    padding: 12px 0;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+header p {
+    margin: 3px 0 0;
+    font-size: 14px;
+}
+
+/* =========================
+   2. NAVIGATION
+   ========================= */
+.navbar {
+    position: fixed;
+    top: 68px;
+    left: 0;
+    width: 100%;
+    background-color: #222;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* reduced padding to prevent cropping */
+    z-index: 999;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    flex-wrap: wrap; /* allow wrapping if space runs out */
+    box-sizing: border-box;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap; /* ensures buttons drop below if needed */
+}
+
+.nav-left a,
+.nav-right a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 8px 14px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-left a:hover,
+.nav-right a:hover {
+    background-color: #4CAF50;
+}
+
+.username {
+    color: #ddd;
+    font-weight: bold;
+}
+
+/* Responsive Fix: stack items neatly on smaller screens */
+@media (max-width: 950px) {
+    .navbar {
+        flex-direction: column;
+        padding: 12px 0;
+        text-align: center;
+    }
+
+    .nav-right {
+        margin-top: 8px;
+        justify-content: center;
+    }
+}
+
+
+/* =========================
+   3. BUTTONS
+   ========================= */
+button,
+.logout-btn {
+    background: linear-gradient(90deg, #4CAF50, #66bb6a);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover,
+.logout-btn:hover {
+    transform: scale(1.05);
+}
+
+.logout-btn {
+    background: linear-gradient(90deg, #e53935, #ef5350);
+}
+
+.logout-btn:hover {
+    background: linear-gradient(90deg, #c62828, #e53935);
+}
+
+/* =========================
+   4. MAIN LAYOUT & FOOTER
+   ========================= */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 120px; /* extra bottom padding for footer */
+    text-align: center;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #222;
+    color: white;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 15px;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* =========================
+   5. FORMS
+   ========================= */
+.login-section,
+.signup-section,
+.add-book-section {
+    background-color: #fff;
+    padding: 2em;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    max-width: 550px;
+    margin: 40px auto;
+    text-align: left;
+}
+
+.login-section h2,
+.signup-section h2,
+.add-book-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #222;
+    font-size: 24px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+textarea {
+    height: 140px;
+    resize: vertical;
+}
+
+/* =========================
+   6. TABLES
+   ========================= */
+table {
+    border-collapse: collapse;
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: white;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: center;
+}
+
+th {
+    background-color: #43a047;
+    color: white;
+}
+
+/* =========================
+   7. ADMIN DASHBOARD
+   ========================= */
+.dashboard-header {
+    text-align: center;
+    background: linear-gradient(90deg, #43a047, #66bb6a);
+    color: white;
+    padding: 20px 0;
+    margin-bottom: 40px;
+}
+
+.admin-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.admin-buttons button {
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   8. BOOK LIBRARY
+   ========================= */
+.library-container {
+    text-align: center;
+    margin: 60px auto;
+    max-width: 900px;
+    padding: 0 20px 160px; /* prevent footer overlap */
+}
+
+.library-container h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #222;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.library-container h2::before {
+    content: "📚";
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
+}
+
+.search-form input[type="text"] {
+    width: 320px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.search-form input:focus {
+    border-color: #43a047;
+}
+
+.search-form button {
+    background-color: #43a047;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* Book Cards */
+.book-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.book-card {
+    background: white;
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+/* =========================
+   9. EDIT BOOKS PAGE
+   ========================= */
+.editbooks-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px 200px; /* bottom padding prevents overlap */
+}
+
+.editbooks-search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.editbooks-search-input {
+    width: 60%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.editbooks-search-btn {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.editbooks-search-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Book Cards */
+.editbooks-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.editbooks-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.editbooks-info {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.editbooks-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.editbooks-author {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.editbooks-content {
+    font-size: 15px;
+    color: #444;
+}
+
+.editbooks-actions {
+    flex-shrink: 0;
+}
+
+.editbooks-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.editbooks-btn:hover {
+    background-color: #218838;
+}
+
+.editbooks-empty {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+/* =========================
+   10. RESPONSIVE
+   ========================= */
+@media (max-width: 950px) {
+    .navbar {
+        flex-direction: column;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .nav-right {
+        margin-top: 10px;
+    }
+
+    main {
+        padding-top: 180px;
+    }
+
+    .editbooks-search-input {
+        width: 80%;
+    }
+}
+
+/* =========================
+   11. PAGINATION Style
+   ========================= */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.pagination a,
+.pagination button {
+    background: linear-gradient(90deg, #4CAF50, #66bb6a);
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    text-align: center;
+}
+
+.pagination a:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #43a047, #66bb6a);
+}
+
+.pagination .disabled {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.page-info {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+}
