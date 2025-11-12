@@ -59,6 +59,19 @@ input, textarea {
     border: none;
     padding: 8px 16px;
     border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    transform: none !important;
+}
+
+.confirm-btn:hover {
+    background-color: #2E7D32;
+    transform: none !important;
+}
+
+.confirm-btn:active {
+    background-color: #1B5E20;
+    transform: none !important;
 }
 
 .cancel-btn {
@@ -67,6 +80,19 @@ input, textarea {
     padding: 8px 16px;
     border-radius: 5px;
     text-decoration: none;
+    transition: background-color 0.3s ease;
+    transform: none !important;
 }
+
+.cancel-btn:hover {
+    background-color: #b71c1c;
+    transform: none !important;
+}
+
+.cancel-btn:active {
+    background-color: #7f0000;
+    transform: none !important;
+}
+
 </style>
 {% endblock %}
