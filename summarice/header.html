@@ -10,11 +10,10 @@
 
         {% if session.get('username') %}
             <a href="{{ url_for('books') }}">Library</a>
+            <a href="{{ url_for('requests') }}">Requests</a>
 
             {% if session.get('role') == 'admin' %}
                 <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
-            {% else %}
-                <a href="{{ url_for('manage_requests') }}">Request</a>
             {% endif %}
         {% endif %}
     </div>
