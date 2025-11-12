@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="add-request-section">
+    <h2>Add Book Request</h2>
+    <form action="{{ url_for('add_request') }}" method="POST" class="add-request-form">
+        <label for="book_name">Book Name:</label>
+        <input type="text" id="book_name" name="book_name" required>
+
+        <label for="author_name">Author:</label>
+        <input type="text" id="author_name" name="author_name" required>
+
+        <label for="additional_info">Additional Information:</label>
+        <textarea id="additional_info" name="additional_info" rows="4" placeholder="Optional details..."></textarea>
+
+        <div class="form-buttons">
+            <button type="submit" class="confirm-btn">Confirm</button>
+            <a href="{{ url_for('requests') }}" class="cancel-btn">Cancel</a>
+        </div>
+    </form>
+</main>
+
+<style>
+.add-request-section {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.add-request-form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+input, textarea {
+    padding: 8px;
+    margin-top: 4px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.confirm-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+</style>
+{% endblock %}
