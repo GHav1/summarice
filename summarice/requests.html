@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="requests-section">
+    <h2>Book Requests</h2>
+
+    <div class="top-actions">
+        <a href="{{ url_for('add_request') }}" class="btn btn-primary">Add Request</a>
+    </div>
+
+    <table class="request-table">
+        <thead>
+            <tr>
+                <th>Total Requests</th>
+                <th>Request #</th>
+                <th>Book Title</th>
+                <th>Book Author</th>
+                <th>Additional Info</th>
+                <th>Account</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if all_requests %}
+                {% for req in all_requests %}
+                <tr>
+                    {% if loop.first %}
+                        <td rowspan="{{ total_requests }}">{{ total_requests }}</td>
+                    {% endif %}
+                    <td>{{ loop.index }}</td>
+                    <td>{{ req.book_name }}</td>
+                    <td>{{ req.author_name }}</td>
+                    <td>{{ req.additional_info }}</td>
+                    <td>{{ req.account }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6">No requests found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</main>
+
+<style>
+.requests-section {
+    padding: 20px;
+    text-align: center;
+}
+
+.top-actions {
+    margin-bottom: 15px;
+}
+
+.btn {
+    background: linear-gradient(90deg, #43a047, #66bb6a);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #388e3c, #4caf50);
+}
+
+.request-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: auto;
+    background-color: #fff;
+}
+
+.request-table th, 
+.request-table td {
+    border: 1px solid #000;
+    padding: 10px;
+    text-align: center;
+}
+
+.request-table th {
+    background: #43a047;
+    color: white;
+    font-weight: bold;
+}
+
+.request-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.request-table tr:hover {
+    background-color: #e8f5e9;
+}
+</style>
+{% endblock %}
