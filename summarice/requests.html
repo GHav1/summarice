@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="requests-section">
-    <h2>Book Requests</h2>
+    <h2>Requests</h2>
 
     <div class="top-actions">
         <a href="{{ url_for('add_request') }}" class="btn btn-primary">Add Request</a>
@@ -12,8 +12,8 @@
             <tr>
                 <th>Total Requests</th>
                 <th>Request #</th>
-                <th>Book Title</th>
-                <th>Book Author</th>
+                <th>Title</th>
+                <th>Author</th>
                 <th>Additional Info</th>
                 <th>Account</th>
             </tr>
@@ -73,13 +73,6 @@
     background-color: #fff;
 }
 
-.request-table th, 
-.request-table td {
-    border: 1px solid #000;
-    padding: 10px;
-    text-align: center;
-}
-
 .request-table th {
     background: #43a047;
     color: white;
@@ -91,7 +84,7 @@
 }
 
 .request-table tr:hover {
-    background-color: #e8f5e9;
+    background-color: grey;
 }
 </style>
 {% endblock %}
