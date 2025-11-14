@@ -1,6 +1,6 @@
-/* =========================
-   0. GLOBAL
-   ========================= */
+/* ========================================================================== */
+/*  0. GLOBAL                                                                 */
+/* ========================================================================== */
 html, body {
     height: 100%;
     margin: 0;
@@ -16,13 +16,39 @@ html, body {
 }
 
 body {
-    padding-top: 125px;  /* Header + Navbar height */
-    padding-bottom: 80px; /* Footer height */
+    padding-top: 125px;
+    padding-bottom: 80px;
+}
+/* ========================================================================== */
+/*  GLOBAL TABLES                                                             */
+/* ========================================================================== */
+table {
+    border-collapse: collapse;
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: white;
+    border: 2px solid #000;
 }
 
-/* =========================
-   1. HEADER
-   ========================= */
+table th, table td {
+    border: 2px solid #000;
+    padding: 12px 15px;
+    text-align: center;
+}
+
+table th {
+    background-color: #43a047;
+    color: white;
+}
+
+table tbody tr:hover td {
+    background-color: #d0d0d0;
+}
+
+/* ========================================================================== */
+/*  1. HEADER                                                                 */
+/* ========================================================================== */
 header {
     position: fixed;
     top: 0;
@@ -46,9 +72,9 @@ header p {
     font-size: 14px;
 }
 
-/* =========================
-   2. NAVIGATION
-   ========================= */
+/* ========================================================================== */
+/*  2. NAVIGATION                                                             */
+/* ========================================================================== */
 .navbar {
     position: fixed;
     top: 68px;
@@ -96,22 +122,9 @@ header p {
     font-weight: bold;
 }
 
-@media (max-width: 950px) {
-    .navbar {
-        flex-direction: column;
-        padding: 12px 0;
-        text-align: center;
-    }
-
-    .nav-right {
-        margin-top: 8px;
-        justify-content: center;
-    }
-}
-
-/* =========================
-   3. BUTTONS
-   ========================= */
+/* ========================================================================== */
+/*  3. BUTTONS                                                                */
+/* ========================================================================== */
 button,
 .logout-btn {
     background: linear-gradient(90deg, #4CAF50, #66bb6a);
@@ -138,9 +151,9 @@ button:hover,
     background: linear-gradient(90deg, #c62828, #e53935);
 }
 
-/* =========================
-   4. MAIN LAYOUT & FOOTER
-   ========================= */
+/* ========================================================================== */
+/*  4. MAIN LAYOUT & FOOTER                                                   */
+/* ========================================================================== */
 main {
     flex: 1;
     display: flex;
@@ -164,9 +177,9 @@ footer {
     z-index: 1000;
 }
 
-/* =========================
-   5. FORMS
-   ========================= */
+/* ========================================================================== */
+/*  5. USER FORMS (LOGIN, SIGNUP, ADD BOOK)                                   */
+/* ========================================================================== */
 .login-section,
 .signup-section,
 .add-book-section {
@@ -210,31 +223,10 @@ textarea {
     resize: vertical;
 }
 
-/* =========================
-   6. TABLES (General)
-   ========================= */
-table {
-    border-collapse: collapse;
-    width: 90%;
-    max-width: 900px;
-    margin: 20px auto;
-    background-color: white;
-}
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px 15px;
-    text-align: center;
-}
-
-th {
-    background-color: #43a047;
-    color: white;
-}
-
-/* =========================
-   7. ADMIN DASHBOARD
-   ========================= */
+/* ========================================================================== */
+/*  6. ADMIN DASHBOARD                                                         */
+/* ========================================================================== */
 .dashboard-header {
     text-align: center;
     background: linear-gradient(90deg, #43a047, #66bb6a);
@@ -258,9 +250,9 @@ th {
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* =========================
-   7.1 ADMIN TABLES
-   ========================= */
+/* ========================================================================== */
+/*  7. ADMIN TABLES                                                            */
+/* ========================================================================== */
 .admin-section {
     padding: 30px 20px 100px;
     text-align: center;
@@ -280,17 +272,14 @@ th {
     border-collapse: collapse;
     margin: 0 auto 40px auto;
     background-color: #fff;
-    font-family: Arial, sans-serif;
 }
 
-/* Black borders */
 .admin-table,
 .admin-table th,
 .admin-table td {
     border: 2px solid #000;
 }
 
-/* Table header */
 .admin-table th {
     background-color: #43a047;
     color: white;
@@ -299,7 +288,6 @@ th {
     text-align: center;
 }
 
-/* Table rows */
 .admin-table td {
     padding: 10px 12px;
     text-align: center;
@@ -310,10 +298,9 @@ th {
 }
 
 .admin-table tr:hover {
-    background-color: #e6e6e6;
+    background-color: grey;
 }
 
-/* bttns 4 admin tables */
 .admin-btn {
     display: inline-block;
     padding: 8px 14px;
@@ -338,9 +325,66 @@ th {
     background-color: #b71c1c;
 }
 
-/* =========================
-   8. BOOK LIBRARY
-   ========================= */
+/* ========================================================================== */
+/*  7-B. ADMIN ACTION BUTTONS (Manage Accounts, Advance Manage Accounts)      */
+/* ========================================================================== */
+
+.action-btn {
+    padding: 8px 14px;
+    text-decoration: none;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    display: inline-block;
+    transition: 0.2s ease;
+    font-size: 14px;
+}
+
+.reset-btn {
+    background-color: #d9534f;
+}
+.reset-btn:hover {
+    background-color: #c9302c;
+}
+
+.edit-btn {
+    background-color: #0275d8;
+}
+.edit-btn:hover {
+    background-color: #025aa5;
+}
+
+.delete-btn {
+    background-color: #b71c1c;
+}
+.delete-btn:hover {
+    background-color: #7f0000;
+}
+
+.promote-btn {
+    background-color: #6a1b9a;
+}
+.promote-btn:hover {
+    background-color: #4a148c;
+}
+
+.demote-btn {
+    background-color: #ff8f00;
+}
+.demote-btn:hover {
+    background-color: #e65100;
+}
+
+.restore-btn {
+    background-color: #2e7d32;
+}
+.restore-btn:hover {
+    background-color: #1b5e20;
+}
+
+/* ========================================================================== */
+/*  8. BOOK LIBRARY (USER SIDE)                                                */
+/* ========================================================================== */
 .library-container {
     text-align: center;
     margin: 60px auto;
@@ -386,9 +430,15 @@ th {
     padding: 10px 18px;
     border-radius: 6px;
     font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-/* Book Cards */
+.search-form button:hover {
+    background-color: #2e7d32;
+}
+
 .book-list {
     display: flex;
     flex-direction: column;
@@ -400,12 +450,32 @@ th {
     padding: 20px 25px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    text-align: left;
+    text-align: center;
 }
 
-/* =========================
-   9. EDIT BOOKS PAGE
-   ========================= */
+.book-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.book-author {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.book-desc {
+    font-size: 0.95em;
+    color: #444;
+    text-align: justify;
+    line-height: 1.4em;
+}
+
+/* ========================================================================== */
+/*  9. EDIT BOOKS PAGE (ADMIN)                                                */
+/* ========================================================================== */
 .editbooks-container {
     max-width: 1000px;
     margin: 0 auto;
@@ -503,38 +573,9 @@ th {
     font-style: italic;
 }
 
-/* =========================
-   10. RESPONSIVE
-   ========================= */
-@media (max-width: 950px) {
-    .navbar {
-        flex-direction: column;
-        padding: 10px 0;
-        text-align: center;
-    }
-
-    .nav-right {
-        margin-top: 10px;
-    }
-
-    main {
-        padding-top: 180px;
-    }
-
-    .editbooks-search-input {
-        width: 80%;
-    }
-
-    .admin-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-}
-
-/* =========================
-   11. PAGINATION
-   ========================= */
+/* ========================================================================== */
+/*  10. PAGINATION                                                             */
+/* ========================================================================== */
 .pagination {
     display: flex;
     justify-content: center;
@@ -576,4 +617,106 @@ th {
     margin-top: 10px;
     font-weight: bold;
     color: #555;
+}
+
+/* ========================================================================== */
+/*  11. SUPER ADMIN                                                            */
+/* ========================================================================== */
+.advance-container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.advance-header {
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+.advance-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.advance-btn {
+    padding: 12px 22px;
+    background: #43a047;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.advance-btn:hover {
+    background: #2e7d32;
+}
+
+/* ========================================================================== */
+/* 12. DROPDOWN MENU                                                           */
+/* ========================================================================== */
+.username-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-toggle {
+    margin-left: 8px;
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.username-menu:hover .dropdown-menu {
+    display: block;
+}
+
+/* Arrows */
+.sort-arrow {
+    text-decoration: none;
+    font-size: 14px;
+    margin-left: 4px;
+    color: #000;
+    transition: 0.2s;
+}
+
+.sort-arrow:hover {
+    color: #43a047; /* green hover */
+    font-weight: bold;
+}
+
+/* ========================================================================== */
+/* 13. RESPONSIVE                                                              */
+/* ========================================================================== */
+@media (max-width: 950px) {
+    .navbar {
+        flex-direction: column;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .nav-right {
+        margin-top: 10px;
+    }
+
+    main {
+        padding-top: 180px;
+    }
+
+    .editbooks-search-input {
+        width: 80%;
+    }
+
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
 }
