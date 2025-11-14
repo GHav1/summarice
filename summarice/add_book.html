@@ -1,22 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 <main>
-    
     <section class="add-book-section">
-        <h2>Add a New Book</h2>
+        <h2>Add New Card</h2>
 
         <form method="POST" class="add-book-form">
-            <label>Book Name:</label>
-            <input type="text" name="book_name" placeholder="Enter book title" required>
+            <label>Title Card Name:</label>
+            <input type="text" name="book_name" placeholder="Enter title" required>
 
             <label>Author Name:</label>
             <input type="text" name="author_name" placeholder="Enter author name" required>
 
             <label>Content:</label>
-            <textarea name="content" placeholder="Enter book content / summary" required></textarea>
+            <textarea name="content" placeholder="Enter content / summary" required></textarea>
 
             <div class="form-buttons">
-                <button type="submit" class="submit-btn">Add Book</button>
+                <button type="submit" class="submit-btn">Add </button>
                 <button type="button" class="back-btn" onclick="history.back()">Back</button>
             </div>
         </form>
