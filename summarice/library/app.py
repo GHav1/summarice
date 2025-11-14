@@ -1,23 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from database import get_db_connection
-import mysql.connector
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "randomizerz"
 
-# ---------- HOME ----------
+
+# ---------------- HOME ----------------
 @app.route("/")
 def index():
     return render_template("index.html", title="Home")
 
 
-# ---------- ABOUT ----------
+# ---------------- ABOUT ----------------
 @app.route("/about")
 def about():
     return render_template("about.html", title="About")
 
 
-# ---------- LOGIN ----------
+# ---------------- LOGIN ----------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -31,28 +32,30 @@ def login():
         cursor.close()
         conn.close()
 
-        if user and password == user["password"]:
+        if user and check_password_hash(user["password"], password):
             session["username"] = user["username"]
             session["fullname"] = user["full_name"]
             session["role"] = user["role"]
+            session["user_id"] = user["id"]
 
-            if user["role"] == "admin":
+            if user["role"] in ["admin", "superAdmin"]:
                 return redirect(url_for("admin_dashboard"))
+
             return redirect(url_for("index"))
-        else:
-            return render_template("loginpage.html", error="Invalid username or password")
+
+        return render_template("loginpage.html", error="Invalid username or password")
 
     return render_template("loginpage.html")
 
 
-# ---------- LOGOUT ----------
+# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
 
 
-# ---------- SIGNUP ----------
+# ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -64,75 +67,89 @@ def signup():
         if password != confirm:
             return render_template("signup.html", error="Passwords do not match")
 
-        # Temporarily save info for verification
         session["signup_data"] = {
             "fullname": fullname,
             "username": username,
             "password": password
         }
 
-        # Redirect to slider verification
         return redirect(url_for("slider_verification"))
 
     return render_template("signup.html")
 
 
-# ---------- SLIDER VERIFICATION ----------
+# ---------------- SLIDER VERIFICATION ----------------
 @app.route("/slider_verification", methods=["GET", "POST"])
 def slider_verification():
     if request.method == "POST":
-        signup_data = session.get("signup_data")
+        data = session.get("signup_data")
 
-        if not signup_data:
+        if not data:
             flash("Session expired. Please register again.")
             return redirect(url_for("signup"))
 
+        hashed = generate_password_hash(data["password"])
+
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO users (full_name, username, password, role) VALUES (%s, %s, %s, %s)",
-            (signup_data["fullname"], signup_data["username"], signup_data["password"], "user")
-        )
+        cursor.execute("""
+            INSERT INTO users (full_name, username, password, role)
+            VALUES (%s, %s, %s, %s)
+        """, (data["fullname"], data["username"], hashed, "user"))
         conn.commit()
         cursor.close()
         conn.close()
 
-        # Clear session after successful registration
-        session.pop("signup_data", None)
+        session.pop("signup_data")
 
         flash("Registration successful! Please log in.")
         return redirect(url_for("login"))
 
-    return render_template("slider_verification.html", title="Verification")
+    return render_template("slider_verification.html")
 
 
-# ---------- ADMIN DASHBOARD ----------
+# ---------------- ADMIN DASHBOARD ----------------
 @app.route("/admin")
 def admin_dashboard():
-    if session.get("role") != "admin":
+    if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
     return render_template("admin_dashboard.html", title="Admin Dashboard")
 
 
-# ---------- MANAGE ACCOUNTS ----------
+# ---------------- MANAGE ACCOUNTS ----------------
 @app.route("/manage_accounts")
 def manage_accounts():
-    if session.get("role") != "admin":
-        return redirect(url_for("login"))
+    sort_by = request.args.get("sort_by", "id")
+    order = request.args.get("order", "asc")
+
+    valid_columns = ["id", "full_name", "username", "role"]
+    if sort_by not in valid_columns:
+        sort_by = "id"
+
+    if order not in ["asc", "desc"]:
+        order = "asc"
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users")
+
+    query = f"SELECT * FROM users ORDER BY {sort_by} {order}"
+    cursor.execute(query)
     users = cursor.fetchall()
+
     cursor.close()
     conn.close()
 
-    return render_template("manage_accounts.html", users=users, title="Manage Accounts")
+    return render_template(
+        "manage_accounts.html",
+        users=users,
+        sort_by=sort_by,
+        order=order
+    )
 
-
+# DELETE ACCOUNT
 @app.route("/delete_account/<int:user_id>")
 def delete_account(user_id):
-    if session.get("role") != "admin":
+    if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
 
     conn = get_db_connection()
@@ -145,36 +162,141 @@ def delete_account(user_id):
     return redirect(url_for("manage_accounts"))
 
 
+# EDIT ACCOUNT
 @app.route("/edit_account/<int:user_id>", methods=["GET", "POST"])
 def edit_account(user_id):
-    if session.get("role") != "admin":
+    if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
+
+    return_to = request.args.get("return_to", "manage_accounts")
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+    user = cursor.fetchone()
+
     if request.method == "POST":
-        full_name = request.form.get("full_name")
-        password = request.form.get("password")
+        fullname = request.form.get("full_name")
         role = request.form.get("role")
 
         cursor.execute("""
-            UPDATE users SET full_name=%s, password=%s, role=%s WHERE id=%s
-        """, (full_name, password, role, user_id))
+            UPDATE users SET full_name = %s, role = %s WHERE id = %s
+        """, (fullname, role, user_id))
         conn.commit()
+
         cursor.close()
         conn.close()
-        return redirect(url_for("manage_accounts"))
 
-    cursor.execute("SELECT * FROM users WHERE id=%s", (user_id,))
-    user = cursor.fetchone()
+        return redirect(url_for(return_to))
+
     cursor.close()
     conn.close()
 
-    return render_template("edit_account.html", user=user)
+    return render_template("edit_account.html", user=user, return_to=return_to)
 
 
-# ---------- BOOK LIBRARY ----------
+# RESET PASSWORD
+@app.route("/reset_password/<int:user_id>")
+def reset_password(user_id):
+    if session.get("role") not in ["admin", "superAdmin"]:
+        return redirect(url_for("login"))
+
+    temp_password = "Summarice123"
+    hashed = generate_password_hash(temp_password)
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET password = %s WHERE id = %s", (hashed, user_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash(f"Temporary password set: {temp_password}")
+    return redirect(url_for("manage_accounts"))
+
+
+# ---------------- SUPER ADMIN ADVANCE ----------------
+@app.route("/advance")
+def advance():
+    if session.get("role") != "superAdmin":
+        return "Access denied", 403
+    return render_template("advance.html")
+
+
+@app.route("/advance_manage_accounts")
+def advance_manage_accounts():
+    if session.get("role") != "superAdmin":
+        return redirect(url_for("login"))
+
+    sort_by = request.args.get("sort_by", "id")
+    order = request.args.get("order", "asc")
+
+    valid_columns = ["id", "full_name", "username", "role"]
+    if sort_by not in valid_columns:
+        sort_by = "id"
+
+    if order not in ["asc", "desc"]:
+        order = "asc"
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    query = f"SELECT * FROM users ORDER BY {sort_by} {order}"
+    cursor.execute(query)
+    users = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "advance_manage_accounts.html",
+        users=users,
+        sort_by=sort_by,
+        order=order
+    )
+
+
+
+# ---------------- CHANGE PASSWORD (users) ----------------
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    # Fetch user bsd sessh username
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users WHERE username = %s", (session['username'],))
+    user = cursor.fetchone()
+
+    if request.method == 'POST':
+        current = request.form.get('current_password')
+        new = request.form.get('new_password')
+        confirm = request.form.get('confirm_password')
+
+        if not check_password_hash(user['password'], current):
+            return render_template("change_password.html", error="Incorrect current password")
+
+        if new != confirm:
+            return render_template("change_password.html", error="Passwords do not match")
+
+        new_hashed = generate_password_hash(new)
+        cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_hashed, user['id']))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        flash("Password updated successfully!")
+        return redirect(url_for("index"))
+
+    cursor.close()
+    conn.close()
+    return render_template("change_password.html", error=None)
+
+
+# ---------------- BOOK LIBRARY ----------------
 @app.route("/books")
 def books():
     search = request.args.get("search", "").strip()
@@ -187,8 +309,8 @@ def books():
 
     if search:
         cursor.execute("""
-            SELECT COUNT(*) AS total 
-            FROM books 
+            SELECT COUNT(*) AS total
+            FROM books
             WHERE book_name LIKE %s OR author_name LIKE %s
         """, (f"%{search}%", f"%{search}%"))
     else:
@@ -199,8 +321,8 @@ def books():
 
     if search:
         cursor.execute("""
-            SELECT * FROM books 
-            WHERE book_name LIKE %s OR author_name LIKE %s 
+            SELECT * FROM books
+            WHERE book_name LIKE %s OR author_name LIKE %s
             LIMIT %s OFFSET %s
         """, (f"%{search}%", f"%{search}%", per_page, offset))
     else:
@@ -210,36 +332,106 @@ def books():
     cursor.close()
     conn.close()
 
-    return render_template(
-        "book_library.html",
-        title="Book Library",
-        books=books,
-        page=page,
-        total_pages=total_pages,
-        search=search
-    )
+    return render_template("book_library.html",
+                           title="Book Library",
+                           books=books,
+                           page=page,
+                           total_pages=total_pages,
+                           search=search)
 
 
-# ---------- MANAGE REQUESTS ----------
+# ---------------- USER REQUESTS ----------------
+@app.route("/requests")
+def requests():
+    if not session.get("username"):
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM requests ORDER BY id ASC")
+    all_requests = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template("requests.html",
+                           title="Book Requests",
+                           all_requests=all_requests,
+                           total_requests=len(all_requests))
+
+
+# ADD REQUEST
+@app.route("/add_request", methods=["GET", "POST"])
+def add_request():
+    if not session.get("username"):
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        book_name = request.form.get("book_name")
+        author_name = request.form.get("author_name")
+        info = request.form.get("additional_info")
+        account = session.get("username")
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO requests (book_name, author_name, additional_info, account)
+            VALUES (%s, %s, %s, %s)
+        """, (book_name, author_name, info, account))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for("requests"))
+
+    return render_template("add_request.html")
+
+
+# MANAGE REQUESTS (Admin)
 @app.route("/manage_requests")
 def manage_requests():
-    if session.get("role") != "admin":
+    if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
-    return render_template("manage_requests.html", title="Manage Requests")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM requests ORDER BY id ASC")
+    requests_list = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template("manage_requests.html",
+                           title="Manage Requests",
+                           all_requests=requests_list,
+                           total_requests=len(requests_list))
 
 
-# ---------- MANAGE WEBSITE ----------
+@app.route("/delete_request/<int:request_id>")
+def delete_request(request_id):
+    if session.get("role") not in ["admin", "superAdmin"]:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM requests WHERE id = %s", (request_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for("manage_requests"))
+
+
+# ---------------- MANAGE WEBSITE ----------------
 @app.route("/manage_website")
 def manage_website():
-    if session.get("role") != "admin":
+    if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
-    return render_template("manage_website.html", title="Manage Website")
+    return render_template("manage_website.html")
 
 
-# ---------- ADD BOOK ----------
+# ---------------- ADD BOOK ----------------
 @app.route("/add_book", methods=["GET", "POST"])
 def add_book():
-    if session.get("role") != "admin":
+    if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
 
     if request.method == "POST":
@@ -259,13 +451,13 @@ def add_book():
 
         return redirect(url_for("books"))
 
-    return render_template("add_book.html", title="Add Book")
+    return render_template("add_book.html")
 
 
-# ---------- EDIT BOOKS ----------
+# ---------------- EDIT BOOKS ----------------
 @app.route("/edit_books", methods=["GET", "POST"])
 def edit_books():
-    if session.get("role") != "admin":
+    if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
 
     conn = get_db_connection()
@@ -273,15 +465,15 @@ def edit_books():
 
     if request.method == "POST":
         book_id = request.form.get("book_id")
-        book_name = request.form.get("book_name")
-        author_name = request.form.get("author_name")
+        name = request.form.get("book_name")
+        author = request.form.get("author_name")
         content = request.form.get("content")
 
         cursor.execute("""
             UPDATE books
             SET book_name = %s, author_name = %s, content = %s
             WHERE id = %s
-        """, (book_name, author_name, content, book_id))
+        """, (name, author, content, book_id))
         conn.commit()
 
     search = request.args.get("search", "").strip()
@@ -297,9 +489,9 @@ def edit_books():
     cursor.close()
     conn.close()
 
-    return render_template("edit_books.html", books=books, title="Edit Books", search=search)
+    return render_template("edit_books.html", books=books, search=search)
 
 
-# ---------- RUN ----------
+# ---------------- RUN APP ----------------
 if __name__ == "__main__":
     app.run(debug=True)
