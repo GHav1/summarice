@@ -14,12 +14,15 @@
         <select name="role">
             <option value="user" {% if user.role=='user' %}selected{% endif %}>User</option>
             <option value="admin" {% if user.role=='admin' %}selected{% endif %}>Admin</option>
+            <option value="superAdmin" {% if user.role=='superAdmin' %}selected{% endif %}>Super Admin</option>
         </select><br><br>
 
         <button type="submit">Save Changes</button>
     </form>
 
     <br>
-    <button onclick="location.href='{{ url_for('manage_accounts') }}'">Back</button>
+    <button onclick="location.href='{{ url_for(return_to) }}'">
+        Back
+    </button>
 </section>
 {% endblock %}
