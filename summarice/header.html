@@ -12,14 +12,27 @@
             <a href="{{ url_for('books') }}">Library</a>
             <a href="{{ url_for('requests') }}">Requests</a>
 
-            {% if session.get('role') == 'admin' %}
+            {% if session.get('role') in ['admin', 'superAdmin'] %}
                 <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+            {% endif %}
+
+            {% if session.get('role') == 'superAdmin' %}
+                <a href="{{ url_for('advance') }}">Advance</a>
             {% endif %}
         {% endif %}
     </div>
 
     <div class="nav-right">
+
         {% if session.get('username') %}
+            <div class="user-menu">
+                <button class="menu-btn">=</button>
+
+                <div class="menu-dropdown">
+                    <a href="{{ url_for('change_password') }}">Change Password</a>
+                </div>
+            </div>
+
             <span class="username">👤 {{ session.get('username') }}</span>
             <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         {% else %}
@@ -28,3 +41,71 @@
         {% endif %}
     </div>
 </nav>
+
+<style>
+.user-menu {
+    position: relative;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.menu-btn {
+    background: #444;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.menu-btn:hover {
+    background: #333;
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 34px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-width: 150px;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+    z-index: 999;
+}
+
+.menu-dropdown a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    font-size: 14px;
+}
+
+.menu-dropdown a:hover {
+    background: #f0f0f0;
+}
+
+.menu-dropdown.show {
+    display: block;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.querySelector(".menu-btn");
+    const menu = document.querySelector(".menu-dropdown");
+
+    btn.addEventListener("click", () => {
+        menu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.remove("show");
+        }
+    });
+});
+</script>
