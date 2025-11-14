@@ -81,6 +81,14 @@
                     >
                         ❌ Cancel
                     </button>
+
+                    <button 
+                        type="button"
+                        onclick="confirmDelete({{ book.id }})"
+                        style="background-color:#d9534f; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-left:10px;"
+                    >
+                        🗑️ Delete
+                    </button>
                 </div>
             </div>
         </form>
@@ -99,6 +107,12 @@ function enableEdit(bookId) {
 function cancelEdit(bookId) {
     document.getElementById("edit-mode-" + bookId).style.display = "none";
     document.getElementById("view-mode-" + bookId).style.display = "block";
+}
+
+function confirmDelete(bookId) {
+    if (confirm("Delete this book? Action cannot be undone")) {
+        window.location.href = "/delete_book/" + bookId;
+    }
 }
 </script>
 {% endblock %}
