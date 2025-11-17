@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <main class="library-container">
 
@@ -8,44 +7,49 @@
     <!-- TOP BAR -->
     <div class="top-bar">
 
-        <!-- Filter Button -->
-        <button 
-            class="filter-btn"
-            onclick="document.getElementById('filter-popup').style.display='block'"
-            style="height: 42px; display:flex; align-items:center;"
-        >
-            ⛃ Filter
-        </button>
+        <!-- Filter Button  -->
+        <button class="filter-btn" onclick="openFilter()">⛃ Filter</button>
 
         <!-- Search Form -->
         <form method="get" action="{{ url_for('books') }}" class="search-form">
-
             <input 
                 type="text" 
                 name="search" 
                 placeholder="Search by title or author..." 
                 value="{{ search }}" 
                 class="search-input"
-                style="height: 42px;"
             >
-
-            <button type="submit" class="search-btn" style="height: 42px;">
-                Search
-            </button>
-
+            <button type="submit" class="search-btn">Search</button>
         </form>
 
     </div>
 
 
-    <!-- Book Cards -->
+    <!-- BOOK CARDS -->
     <div class="book-list">
         {% if books %}
             {% for book in books %}
                 <div class="book-card">
-                    <h3 class="book-title">{{ book.book_name }}</h3>
-                    <p class="book-author">by {{ book.author_name }}</p>
-                    <p class="book-desc">{{ book.content }}</p>
+
+                    <!-- IMAGE -->
+                    <div class="book-image-box">
+                        {% if book.image_filename %}
+                            <img 
+                                src="{{ url_for('book_images', filename=book.image_filename) }}" 
+                                class="book-image"
+                            >
+                        {% else %}
+                            <div class="no-image">No Image</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="book-content">
+                        <h3 class="book-title">{{ book.book_name }}</h3>
+                        <p class="book-author">by {{ book.author_name }}</p>
+                        <p class="book-desc">{{ book.content }}</p>
+                    </div>
+
                 </div>
             {% endfor %}
         {% else %}
@@ -54,18 +58,18 @@
     </div>
 
 
-    <!-- Pagination -->
+    <!-- PAGE NAVIGATION -->
     <div class="pagination">
         {% if page > 1 %}
-            <a href="{{ url_for('books', page=page-1, search=search, sort=sort, order=order) }}" class="pagination-btn">⟵ Previous</a>
+            <a href="{{ url_for('books', page=page-1, search=search, sort=sort, order=order) }}">⟵ Previous</a>
         {% else %}
-            <button class="pagination-btn disabled" disabled>⟵ Previous</button>
+            <button class="disabled" disabled>⟵ Previous</button>
         {% endif %}
 
         {% if page < total_pages %}
-            <a href="{{ url_for('books', page=page+1, search=search, sort=sort, order=order) }}" class="pagination-btn">Next ⟶</a>
+            <a href="{{ url_for('books', page=page+1, search=search, sort=sort, order=order) }}">Next ⟶</a>
         {% else %}
-            <button class="pagination-btn disabled" disabled>Next ⟶</button>
+            <button class="disabled" disabled>Next ⟶</button>
         {% endif %}
     </div>
 
@@ -74,75 +78,112 @@
     </div>
 
 
-    <!-- Filter Popup -->
+    <!-- FILTER  -->
+    <div id="filter-backdrop" style="display:none;" onclick="closeFilter()"></div>
+
     <div id="filter-popup" class="filter-popup" style="display:none;">
         <div class="filter-card">
+            <h3>Sort Books</h3>
 
-            <h3>Sort by</h3>
-
-            <form method="get" action="{{ url_for('books') }}">
-
+            <form id="filter-form-books" method="get" action="{{ url_for('books') }}">
                 <input type="hidden" name="search" value="{{ search }}">
-                <input type="hidden" id="order" name="order" value="{{ order }}">
+                <input type="hidden" name="sort" id="filter-sort-books" value="{{ sort or '' }}">
+                <input type="hidden" name="order" id="filter-order-books" value="{{ order or '' }}">
 
-                <div class="filter-grid" style="
-                    display:grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap:14px 10px;
-                    margin:15px 0 20px;
-                    min-width:260px;
-                ">
+                <div class="filter-grid">
+                    <label><input type="radio" name="popup-sort" value="title_asc"> Title A → Z</label>
+                    <label><input type="radio" name="popup-sort" value="title_desc"> Title Z → A</label>
 
-                    <label>
-                        <input type="radio" name="sort" value="name"
-                            data-order="asc"
-                            {% if sort=='name' and order=='asc' %}checked{% endif %}>
-                        Title A → Z
-                    </label>
-
-                    <label>
-                        <input type="radio" name="sort" value="name"
-                            data-order="desc"
-                            {% if sort=='name' and order=='desc' %}checked{% endif %}>
-                        Title Z → A
-                    </label>
-
-                    <label>
-                        <input type="radio" name="sort" value="author"
-                            data-order="asc"
-                            {% if sort=='author' and order=='asc' %}checked{% endif %}>
-                        Author A → Z
-                    </label>
-
-                    <label>
-                        <input type="radio" name="sort" value="author"
-                            data-order="desc"
-                            {% if sort=='author' and order=='desc' %}checked{% endif %}>
-                        Author Z → A
-                    </label>
-
+                    <label><input type="radio" name="popup-sort" value="author_asc"> Author A → Z</label>
+                    <label><input type="radio" name="popup-sort" value="author_desc"> Author Z → A</label>
                 </div>
 
-                <button type="submit" class="confirm-btn">Confirm</button>
-                <button type="button" class="back-btn"
-                    onclick="document.getElementById('filter-popup').style.display='none'">
-                    Back
-                </button>
-
+                <div class="filter-buttons" style="display:flex; gap:12px; margin-top:12px;">
+                    <button type="button" class="confirm-btn" onclick="applySort('books')">Confirm</button>
+                    <button type="button" class="back-btn" onclick="closeFilter()">Back</button>
+                </div>
             </form>
-
         </div>
     </div>
 
 
+
     <script>
-        document.querySelectorAll("input[name='sort']").forEach(el => {
-            el.addEventListener("change", () => {
-                let order = el.dataset.order || "asc";
-                document.getElementById("order").value = order;
-            });
-        });
+        function openFilter() {
+
+            document.getElementById('filter-backdrop').style.display = 'block';
+            document.getElementById('filter-popup').style.display = 'block';
+        }
+
+        function closeFilter() {
+            document.getElementById('filter-popup').style.display = 'none';
+            document.getElementById('filter-backdrop').style.display = 'none';
+        }
+
+
+        function applySort(target) {
+            const selected = document.querySelector("input[name='popup-sort']:checked");
+            if (!selected) {
+                alert("Please select a sort option.");
+                return;
+            }
+            const [key, ord] = selected.value.split('_');
+
+            if (target === 'books') {
+                document.getElementById('filter-sort-books').value = key;
+                document.getElementById('filter-order-books').value = ord;
+                document.getElementById('filter-form-books').submit();
+            } else {
+                const hiddenSort = document.getElementById('hidden-sort');
+                const hiddenOrder = document.getElementById('hidden-order');
+                if (hiddenSort && hiddenOrder) {
+                    hiddenSort.value = key;
+                    hiddenOrder.value = ord;
+                    const searchForm = document.querySelector("form[action$='edit_books']");
+                    if (searchForm) searchForm.submit();
+                } else {
+                    closeFilter();
+                }
+            }
+        }
     </script>
+
+    <style>
+        #filter-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 340px;
+            background: #fff;
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            z-index: 9999;
+        }
+        #filter-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 9998;
+        }
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .confirm-btn, .back-btn {
+            flex: 1;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+        .confirm-btn { background: linear-gradient(90deg,#4CAF50,#66BB6A); color:#fff; }
+        .back-btn { background: #e0e0e0; color:#333; }
+    </style>
 
 </main>
 {% endblock %}
