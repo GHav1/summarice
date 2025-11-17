@@ -19,6 +19,8 @@ body {
     padding-top: 125px;
     padding-bottom: 80px;
 }
+
+
 /* ========================================================================== */
 /*  GLOBAL TABLES                                                             */
 /* ========================================================================== */
@@ -46,6 +48,8 @@ table tbody tr:hover td {
     background-color: #d0d0d0;
 }
 
+
+
 /* ========================================================================== */
 /*  1. HEADER                                                                 */
 /* ========================================================================== */
@@ -71,6 +75,8 @@ header p {
     margin: 3px 0 0;
     font-size: 14px;
 }
+
+
 
 /* ========================================================================== */
 /*  2. NAVIGATION                                                             */
@@ -122,6 +128,8 @@ header p {
     font-weight: bold;
 }
 
+
+
 /* ========================================================================== */
 /*  3. BUTTONS                                                                */
 /* ========================================================================== */
@@ -151,6 +159,8 @@ button:hover,
     background: linear-gradient(90deg, #c62828, #e53935);
 }
 
+
+
 /* ========================================================================== */
 /*  4. MAIN LAYOUT & FOOTER                                                   */
 /* ========================================================================== */
@@ -176,6 +186,8 @@ footer {
     box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
     z-index: 1000;
 }
+
+
 
 /* ========================================================================== */
 /*  5. USER FORMS (LOGIN, SIGNUP, ADD BOOK)                                   */
@@ -224,6 +236,7 @@ textarea {
 }
 
 
+
 /* ========================================================================== */
 /*  6. ADMIN DASHBOARD                                                         */
 /* ========================================================================== */
@@ -249,6 +262,7 @@ textarea {
     font-weight: bold;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
+
 
 /* ========================================================================== */
 /*  7. ADMIN TABLES                                                            */
@@ -325,10 +339,11 @@ textarea {
     background-color: #b71c1c;
 }
 
-/* ========================================================================== */
-/*  7-B. ADMIN ACTION BUTTONS (Manage Accounts, Advance Manage Accounts)      */
-/* ========================================================================== */
 
+
+/* ========================================================================== */
+/* 7-B. ADMIN ACTION BUTTONS                                                  */
+/* ========================================================================== */
 .action-btn {
     padding: 8px 14px;
     text-decoration: none;
@@ -340,50 +355,28 @@ textarea {
     font-size: 14px;
 }
 
-.reset-btn {
-    background-color: #d9534f;
-}
-.reset-btn:hover {
-    background-color: #c9302c;
-}
+.reset-btn { background-color: #d9534f; }
+.reset-btn:hover { background-color: #c9302c; }
 
-.edit-btn {
-    background-color: #0275d8;
-}
-.edit-btn:hover {
-    background-color: #025aa5;
-}
+.edit-btn { background-color: #0275d8; }
+.edit-btn:hover { background-color: #025aa5; }
 
-.delete-btn {
-    background-color: #b71c1c;
-}
-.delete-btn:hover {
-    background-color: #7f0000;
-}
+.delete-btn { background-color: #b71c1c; }
+.delete-btn:hover { background-color: #7f0000; }
 
-.promote-btn {
-    background-color: #6a1b9a;
-}
-.promote-btn:hover {
-    background-color: #4a148c;
-}
+.promote-btn { background-color: #6a1b9a; }
+.promote-btn:hover { background-color: #4a148c; }
 
-.demote-btn {
-    background-color: #ff8f00;
-}
-.demote-btn:hover {
-    background-color: #e65100;
-}
+.demote-btn { background-color: #ff8f00; }
+.demote-btn:hover { background-color: #e65100; }
 
-.restore-btn {
-    background-color: #2e7d32;
-}
-.restore-btn:hover {
-    background-color: #1b5e20;
-}
+.restore-btn { background-color: #2e7d32; }
+.restore-btn:hover { background-color: #1b5e20; }
+
+
 
 /* ========================================================================== */
-/*  8. BOOK LIBRARY (USER SIDE)                                                */
+/*  8. BOOK LIBRARY (USER SIDE)                                               */
 /* ========================================================================== */
 .library-container {
     text-align: center;
@@ -406,39 +399,72 @@ textarea {
     content: "📚";
 }
 
-.search-form {
+
+
+/*  TOP BAR   */
+.top-bar,
+.editbooks-topbar {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin-bottom: 40px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
 }
 
-.search-form input[type="text"] {
+.top-bar button,
+.top-bar input,
+.editbooks-topbar button,
+.editbooks-topbar input {
+    height: 42px;
+}
+
+.filter-btn {
+    background: linear-gradient(90deg, #4CAF50, #66bb6a);
+    color: white;
+    border: none;
+    padding: 0 18px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.filter-btn:hover {
+    transform: scale(1.05);
+}
+
+.search-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.search-input {
     width: 320px;
     padding: 10px 14px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    font-size: 15px;
 }
 
-.search-form input:focus {
-    border-color: #43a047;
-}
-
-.search-form button {
+.search-btn {
     background-color: #43a047;
     color: white;
-    padding: 10px 18px;
+    padding: 0 18px;
     border-radius: 6px;
-    font-weight: bold;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-weight: bold;
+    font-size: 15px;
 }
 
-.search-form button:hover {
+.search-btn:hover {
     background-color: #2e7d32;
 }
 
+
+
+/*  BOOK CARD LAYOUT    */
 .book-list {
     display: flex;
     flex-direction: column;
@@ -450,13 +476,49 @@ textarea {
     padding: 20px 25px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    text-align: center;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.book-image-box {
+    width: 150px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.book-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    width: 100%;
+    height: 100%;
+    background: #ccc;
+    color: #555;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-content {
+    flex: 1;
+    text-align: left;
+    padding-right: 10px;
 }
 
 .book-title {
-    font-size: 1.2em;
+    font-size: 1.25em;
     font-weight: bold;
-    color: #333;
+    color: #222;
     margin-bottom: 5px;
 }
 
@@ -469,12 +531,69 @@ textarea {
 .book-desc {
     font-size: 0.95em;
     color: #444;
-    text-align: justify;
     line-height: 1.4em;
+    text-align: justify;
 }
 
+
+
+/*  FILTER POPUP  */
+#filter-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+    display: none;
+}
+
+#filter-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 22px;
+    border-radius: 12px;
+    width: 300px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    z-index: 9999;
+    display: none;
+    animation: popupFade 0.2s ease-out;
+}
+
+@keyframes popupFade {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.confirm-btn,
+.back-btn {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    margin-top: 8px;
+}
+
+.confirm-btn {
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    color: white;
+}
+
+.back-btn {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.confirm-btn:hover { background: #3e8e41; }
+.back-btn:hover { background: #d5d5d5; }
+
+
 /* ========================================================================== */
-/*  9. EDIT BOOKS PAGE (ADMIN)                                                */
+/*  9. EDIT BOOKS PAGE                                                        */
 /* ========================================================================== */
 .editbooks-container {
     max-width: 1000px;
@@ -482,28 +601,32 @@ textarea {
     padding: 40px 20px 200px;
 }
 
-.editbooks-search-container {
+.editbooks-topbar {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 25px;
 }
 
 .editbooks-search-input {
-    width: 60%;
-    padding: 10px 15px;
-    border-radius: 8px;
+    width: 300px;
+    padding: 10px 14px;
+    border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 16px;
+    font-size: 15px;
+    height: 42px;
 }
 
 .editbooks-search-btn {
-    margin-left: 10px;
-    padding: 10px 20px;
+    padding: 0 18px;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
+    height: 42px;
+    font-size: 15px;
 }
 
 .editbooks-search-btn:hover {
@@ -526,32 +649,12 @@ textarea {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.editbooks-info {
-    flex: 1;
-    padding-right: 20px;
-}
+.editbooks-info { flex: 1; padding-right: 20px; }
+.editbooks-title { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 5px; }
+.editbooks-author { font-size: 16px; color: #777; margin-bottom: 10px; }
+.editbooks-content { font-size: 15px; color: #444; }
 
-.editbooks-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.editbooks-author {
-    font-size: 16px;
-    color: #777;
-    margin-bottom: 10px;
-}
-
-.editbooks-content {
-    font-size: 15px;
-    color: #444;
-}
-
-.editbooks-actions {
-    flex-shrink: 0;
-}
+.editbooks-actions { flex-shrink: 0; }
 
 .editbooks-btn {
     background-color: #28a745;
@@ -563,15 +666,14 @@ textarea {
     font-size: 15px;
 }
 
-.editbooks-btn:hover {
-    background-color: #218838;
-}
+.editbooks-btn:hover { background-color: #218838; }
 
 .editbooks-empty {
     text-align: center;
     color: #777;
     font-style: italic;
 }
+
 
 /* ========================================================================== */
 /*  10. PAGINATION                                                             */
@@ -619,6 +721,7 @@ textarea {
     color: #555;
 }
 
+
 /* ========================================================================== */
 /*  11. SUPER ADMIN                                                            */
 /* ========================================================================== */
@@ -651,6 +754,7 @@ textarea {
     background: #2e7d32;
 }
 
+
 /* ========================================================================== */
 /* 12. DROPDOWN MENU                                                           */
 /* ========================================================================== */
@@ -678,7 +782,6 @@ textarea {
     display: block;
 }
 
-/* Arrows */
 .sort-arrow {
     text-decoration: none;
     font-size: 14px;
@@ -688,9 +791,11 @@ textarea {
 }
 
 .sort-arrow:hover {
-    color: #43a047; /* green hover */
+    color: #43a047;
     font-weight: bold;
 }
+
+
 
 /* ========================================================================== */
 /* 13. RESPONSIVE                                                              */
@@ -720,3 +825,140 @@ textarea {
         white-space: nowrap;
     }
 }
+
+
+
+/* ========================================================================== */
+/* 14. ADD BOOK PAGE                                                          */
+/* ========================================================================== */
+.addbook-buttons {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.addbook-btn {
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+}
+
+.addbook-add {
+    background: #28a745;
+    color: white;
+}
+.addbook-add:hover {
+    background: #1f7a33;
+}
+
+.addbook-back {
+    background: #6c757d;
+    color: white;
+}
+.addbook-back:hover {
+    background: #555b61;
+}
+
+
+
+/* ========================================================================== */
+/* 15. SIGNUP PAGE                                                             */
+/* ========================================================================== */
+.signup-form .form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.signup-register-btn,
+.signup-back-btn {
+    width: 180px;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.signup-register-btn {
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    color: white;
+}
+
+.signup-back-btn {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.signup-register-btn:hover { background: #3e8e41; }
+.signup-back-btn:hover { background: #d5d5d5; }
+
+/*  ADD REQUEST PAGE                                                          */
+
+.add-request-section {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.add-request-form label {
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+.add-request-form input,
+.add-request-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 22px;
+}
+
+.confirm-btn,
+.cancel-btn {
+    width: 170px;
+    padding: 10px 0;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+}
+
+.confirm-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+.confirm-btn:hover { background-color: #2E7D32; }
+.confirm-btn:active { background-color: #1B5E20; }
+
+.cancel-btn {
+    background-color: #f44336;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+}
+.cancel-btn:hover { background-color: #b71c1c; }
+.cancel-btn:active { background-color: #7f0000; }
