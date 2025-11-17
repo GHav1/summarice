@@ -1,10 +1,20 @@
 {% extends "base.html" %}
-{% block content %}
-<section class="page-header"></section>
 
-<main class="admin-section">
-    <h2>Manage Accounts</h2>
-    <table class="admin-table">
+{% block content %}
+<h2>Manage Accounts</h2>
+
+<!-- Flsh Mssgs -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash-box">
+        {% for msg in messages %}
+            <p>{{ msg }}</p>
+        {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<table class="table">
     <thead>
         <tr>
             <th>
@@ -34,14 +44,16 @@
             <th>Actions</th>
         </tr>
     </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ user.full_name }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.role }}</td>
+
+
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.full_name }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.role }}</td>
+
             <td>
                 <a class="action-btn reset-btn"
                    href="{{ url_for('reset_password', user_id=user.id) }}"
@@ -49,10 +61,8 @@
                    Reset Password
                 </a>
             </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</main>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
-
