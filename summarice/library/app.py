@@ -1,18 +1,65 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+import os
+import uuid
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from database import get_db_connection
+from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "randomizerz"
 
+# ---------- FILE UPLOAD CONFIG ----------
+UPLOAD_FOLDER = os.path.join(app.root_path, "static", "book_images")
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 4 * 1024 * 1024  # 4 MB limit 
 
-# ---------------- HOME ----------------
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def save_uploaded_file(file_storage):
+    """Save uploaded file, return saved filename (unique)."""
+    if not file_storage:
+        return None
+    filename = secure_filename(file_storage.filename)
+    if filename == "" or not allowed_file(filename):
+        return None
+
+    ext = filename.rsplit(".", 1)[1].lower()
+    new_name = f"{uuid.uuid4().hex}.{ext}"
+    save_path = os.path.join(app.config["UPLOAD_FOLDER"], new_name)
+    file_storage.save(save_path)
+    return new_name
+
+
+def remove_image_file(filename):
+    """Delete image file from disk if exists."""
+    if not filename:
+        return
+    path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    try:
+        if os.path.exists(path):
+            os.remove(path)
+    except:
+        pass
+
+
+# ---------- SERVE IMAGE FILES ----------
+@app.route("/book_images/<filename>")
+def book_images(filename):
+    """Serve uploaded book images."""
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
+
+# ---------------- HOME / ABOUT ----------------
 @app.route("/")
 def index():
     return render_template("index.html", title="Home")
 
 
-# ---------------- ABOUT ----------------
 @app.route("/about")
 def about():
     return render_template("about.html", title="About")
@@ -48,7 +95,6 @@ def login():
     return render_template("loginpage.html")
 
 
-# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
@@ -64,6 +110,18 @@ def signup():
         password = request.form.get("password")
         confirm = request.form.get("confirm")
 
+        # ---- Username Check ----
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
+        if cursor.fetchone():
+            cursor.close()
+            conn.close()
+            return render_template("signup.html", error="Username is already taken.")
+
+        cursor.close()
+        conn.close()
+
         if password != confirm:
             return render_template("signup.html", error="Passwords do not match")
 
@@ -78,7 +136,6 @@ def signup():
     return render_template("signup.html")
 
 
-# ---------------- SLIDER VERIFICATION ----------------
 @app.route("/slider_verification", methods=["GET", "POST"])
 def slider_verification():
     if request.method == "POST":
@@ -131,11 +188,8 @@ def manage_accounts():
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-
-    query = f"SELECT * FROM users ORDER BY {sort_by} {order}"
-    cursor.execute(query)
+    cursor.execute(f"SELECT * FROM users ORDER BY {sort_by} {order}")
     users = cursor.fetchall()
-
     cursor.close()
     conn.close()
 
@@ -146,11 +200,13 @@ def manage_accounts():
         order=order
     )
 
-# DELETE ACCOUNT
+
 @app.route("/delete_account/<int:user_id>")
 def delete_account(user_id):
     if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
+
+    return_to = request.args.get("return_to", "manage_accounts")
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -159,10 +215,10 @@ def delete_account(user_id):
     cursor.close()
     conn.close()
 
-    return redirect(url_for("manage_accounts"))
+    flash("Account deleted successfully!")
+    return redirect(url_for(return_to))
 
 
-# EDIT ACCOUNT
 @app.route("/edit_account/<int:user_id>", methods=["GET", "POST"])
 def edit_account(user_id):
     if session.get("role") not in ["admin", "superAdmin"]:
@@ -179,7 +235,6 @@ def edit_account(user_id):
     if request.method == "POST":
         fullname = request.form.get("full_name")
         role = request.form.get("role")
-
         cursor.execute("""
             UPDATE users SET full_name = %s, role = %s WHERE id = %s
         """, (fullname, role, user_id))
@@ -188,6 +243,7 @@ def edit_account(user_id):
         cursor.close()
         conn.close()
 
+        flash("Account updated successfully!")
         return redirect(url_for(return_to))
 
     cursor.close()
@@ -196,11 +252,12 @@ def edit_account(user_id):
     return render_template("edit_account.html", user=user, return_to=return_to)
 
 
-# RESET PASSWORD
 @app.route("/reset_password/<int:user_id>")
 def reset_password(user_id):
     if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
+
+    return_to = request.args.get("return_to", "manage_accounts")
 
     temp_password = "Summarice123"
     hashed = generate_password_hash(temp_password)
@@ -213,7 +270,7 @@ def reset_password(user_id):
     conn.close()
 
     flash(f"Temporary password set: {temp_password}")
-    return redirect(url_for("manage_accounts"))
+    return redirect(url_for(return_to))
 
 
 # ---------------- SUPER ADMIN ADVANCE ----------------
@@ -241,11 +298,8 @@ def advance_manage_accounts():
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-
-    query = f"SELECT * FROM users ORDER BY {sort_by} {order}"
-    cursor.execute(query)
+    cursor.execute(f"SELECT * FROM users ORDER BY {sort_by} {order}")
     users = cursor.fetchall()
-
     cursor.close()
     conn.close()
 
@@ -257,14 +311,12 @@ def advance_manage_accounts():
     )
 
 
-
-# ---------------- CHANGE PASSWORD (users) ----------------
+# ---------------- CHANGE PASSWORD ----------------
 @app.route('/change_password', methods=['GET', 'POST'])
 def change_password():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    # Fetch cur usr 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users WHERE username = %s", (session['username'],))
@@ -309,7 +361,6 @@ def books():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Choose sorting col
     if sort == "author":
         sort_column = "author_name"
     else:
@@ -317,19 +368,20 @@ def books():
 
     order_sql = "ASC" if order == "asc" else "DESC"
 
-    # COUNT
+    # Count total books
     if search:
-        cursor.execute(f"""
+        cursor.execute("""
             SELECT COUNT(*) AS total
             FROM books
             WHERE book_name LIKE %s OR author_name LIKE %s
         """, (f"%{search}%", f"%{search}%"))
     else:
         cursor.execute("SELECT COUNT(*) AS total FROM books")
+
     total_books = cursor.fetchone()["total"]
     total_pages = (total_books + per_page - 1) // per_page
 
-    # FETCH
+    # Fetch books
     if search:
         cursor.execute(f"""
             SELECT * FROM books
@@ -348,13 +400,15 @@ def books():
     cursor.close()
     conn.close()
 
-    return render_template("book_library.html",
-                           books=books,
-                           page=page,
-                           total_pages=total_pages,
-                           search=search,
-                           sort=sort,
-                           order=order)
+    return render_template(
+        "book_library.html",
+        books=books,
+        page=page,
+        total_pages=total_pages,
+        search=search,
+        sort=sort,
+        order=order
+    )
 
 
 # ---------------- USER REQUESTS ----------------
@@ -376,7 +430,6 @@ def requests():
                            total_requests=len(all_requests))
 
 
-# ADD REQUEST
 @app.route("/add_request", methods=["GET", "POST"])
 def add_request():
     if not session.get("username"):
@@ -403,7 +456,7 @@ def add_request():
     return render_template("add_request.html")
 
 
-# MANAGE REQUESTS
+# ---------------- MANAGE REQUESTS ----------------
 @app.route("/manage_requests")
 def manage_requests():
     if session.get("role") not in ["admin", "superAdmin"]:
@@ -455,13 +508,18 @@ def add_book():
         book_name = request.form.get("book_name")
         author_name = request.form.get("author_name")
         content = request.form.get("content")
+        file = request.files.get("image")
+
+        saved_filename = None
+        if file and allowed_file(file.filename):
+            saved_filename = save_uploaded_file(file)
 
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO books (book_name, author_name, content)
-            VALUES (%s, %s, %s)
-        """, (book_name, author_name, content))
+            INSERT INTO books (book_name, author_name, content, image_filename)
+            VALUES (%s, %s, %s, %s)
+        """, (book_name, author_name, content, saved_filename))
         conn.commit()
         cursor.close()
         conn.close()
@@ -469,6 +527,52 @@ def add_book():
         return redirect(url_for("books"))
 
     return render_template("add_book.html")
+
+
+# ---------------- DELETE BOOK ----------------
+@app.route("/delete_book/<int:book_id>")
+def delete_book(book_id):
+    if session.get("role") not in ["admin", "superAdmin"]:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT image_filename FROM books WHERE id = %s", (book_id,))
+    row = cursor.fetchone()
+
+    if row and row.get("image_filename"):
+        remove_image_file(row["image_filename"])
+
+    cursor.execute("DELETE FROM books WHERE id = %s", (book_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash("Book deleted.")
+    return redirect(url_for("edit_books"))
+
+
+# ---------------- DELETE BOOK IMAGE ----------------
+@app.route("/delete_book_image/<int:book_id>")
+def delete_book_image(book_id):
+    if session.get("role") not in ["admin", "superAdmin"]:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT image_filename FROM books WHERE id = %s", (book_id,))
+    row = cursor.fetchone()
+
+    if row and row.get("image_filename"):
+        remove_image_file(row["image_filename"])
+
+    cursor.execute("UPDATE books SET image_filename = NULL WHERE id = %s", (book_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash("Image removed.")
+    return redirect(url_for("edit_books"))
 
 
 # ---------------- EDIT BOOKS ----------------
@@ -480,29 +584,37 @@ def edit_books():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Handle POST (sv edit)
+    # SAVE EDIT
     if request.method == "POST":
         book_id = request.form.get("book_id")
         name = request.form.get("book_name")
         author = request.form.get("author_name")
         content = request.form.get("content")
+        file = request.files.get("image")
+
+        cursor.execute("SELECT image_filename FROM books WHERE id = %s", (book_id,))
+        row = cursor.fetchone()
+        old_image = row["image_filename"] if row else None
+
+        new_filename = old_image
+        if file and allowed_file(file.filename):
+            new_filename = save_uploaded_file(file)
+            if old_image:
+                remove_image_file(old_image)
 
         cursor.execute("""
             UPDATE books
-            SET book_name = %s, author_name = %s, content = %s
+            SET book_name = %s, author_name = %s, content = %s, image_filename = %s
             WHERE id = %s
-        """, (name, author, content, book_id))
+        """, (name, author, content, new_filename, book_id))
         conn.commit()
 
+    # FETCH LIST
     search = request.args.get("search", "").strip()
     sort = request.args.get("sort", "name")
     order = request.args.get("order", "asc")
 
-    if sort == "author":
-        sort_column = "author_name"
-    else:
-        sort_column = "book_name"
-
+    sort_column = "author_name" if sort == "author" else "book_name"
     order_sql = "ASC" if order == "asc" else "DESC"
 
     if search:
@@ -512,20 +624,19 @@ def edit_books():
             ORDER BY {sort_column} {order_sql}
         """, (f"%{search}%", f"%{search}%"))
     else:
-        cursor.execute(f"""
-            SELECT * FROM books
-            ORDER BY {sort_column} {order_sql}
-        """)
+        cursor.execute(f"SELECT * FROM books ORDER BY {sort_column} {order_sql}")
 
     books = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    return render_template("edit_books.html",
-                           books=books,
-                           search=search,
-                           sort=sort,
-                           order=order)
+    return render_template(
+        "edit_books.html",
+        books=books,
+        search=search,
+        sort=sort,
+        order=order
+    )
 
 
 # ---------------- RUN APP ----------------
