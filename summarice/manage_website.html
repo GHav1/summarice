@@ -1,13 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-<header>
+<section class="page-header">
     <h1>Website Management</h1>
-</header>
+</section>
 
-<main>
-    <button onclick="location.href='{{ url_for('add_book') }}'">Add Book</button>
-    <button onclick="location.href='{{ url_for('books') }}'">View Books</button>
-    <br><br>
-    <button onclick="location.href='{{ url_for('admin_dashboard') }}'">Back</button>
+<main style="text-align:center; margin-top:20px;">
+
+    <!-- BUTTON WRAPPER -->
+    <div style="display:flex; justify-content:center; gap:15px; margin-bottom:25px;">
+
+        <button 
+            onclick="location.href='{{ url_for('add_book') }}'"
+            style="background:#28a745; color:white; padding:10px 18px; border:none; border-radius:6px; cursor:pointer; font-size:16px;"
+        >
+            Add in Library
+        </button>
+
+        <button 
+            onclick="location.href='{{ url_for('edit_books') }}'"
+            style="background:#007bff; color:white; padding:10px 18px; border:none; border-radius:6px; cursor:pointer; font-size:16px;"
+        >
+            Edit Library
+        </button>
+
+    </div>
+
+    <!-- BACK BUTTON -->
+    <button 
+        onclick="location.href='{{ url_for('admin_dashboard') }}'"
+        style="background:#6c757d; color:white; padding:10px 18px; border:none; border-radius:6px; cursor:pointer; font-size:16px;"
+    >
+        Back
+    </button>
+
 </main>
 {% endblock %}
