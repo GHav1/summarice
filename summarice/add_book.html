@@ -2,9 +2,10 @@
 {% block content %}
 <main>
     <section class="add-book-section">
-        <h2>Add New Card</h2>
+        <h2 style="text-align:center; margin-bottom:20px;">Add New Card</h2>
 
-        <form method="POST" class="add-book-form">
+        <form method="POST" enctype="multipart/form-data" class="add-book-form">
+
             <label>Title Card Name:</label>
             <input type="text" name="book_name" placeholder="Enter title" required>
 
@@ -14,11 +15,50 @@
             <label>Content:</label>
             <textarea name="content" placeholder="Enter content / summary" required></textarea>
 
-            <div class="form-buttons">
-                <button type="submit" class="submit-btn">Add </button>
-                <button type="button" class="back-btn" onclick="history.back()">Back</button>
+            <!-- img upload -->
+            <label>Book Image:</label>
+
+            <div id="image-preview" 
+                 style="width:150px; height:200px; border:1px solid #ccc; display:flex;
+                        align-items:center; justify-content:center; margin-bottom:10px;">
+                <span style="color:#777;">No image selected</span>
             </div>
+
+            <input type="file" name="image" accept="image/*" onchange="previewImage(event)">
+
+            <button type="button" onclick="removeImage()" 
+                    style="background:#dc3545; color:white; border:none; padding:6px 10px;
+                           border-radius:5px; cursor:pointer; margin-top:5px;">
+                Remove Image
+            </button>
+
+            <div class="addbook-buttons">
+                <button type="submit" class="addbook-btn addbook-add">Add</button>
+                <button type="button" class="addbook-btn addbook-back" onclick="history.back()">Back</button>
+            </div>
+
         </form>
     </section>
 </main>
+
+<script>
+function previewImage(event) {
+    const preview = document.getElementById("image-preview");
+    preview.innerHTML = "";
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(event.target.files[0]);
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100%";
+
+    preview.appendChild(img);
+}
+
+function removeImage() {
+    document.querySelector("input[name='image']").value = "";
+    const preview = document.getElementById("image-preview");
+    preview.innerHTML = "<span style='color:#777;'>No image selected</span>";
+}
+</script>
+
 {% endblock %}
