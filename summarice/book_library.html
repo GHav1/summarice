@@ -2,18 +2,41 @@
 
 {% block content %}
 <main class="library-container">
+
     <h2 class="library-header">Library</h2>
 
-    <!-- Search Bar -->
-    <form method="get" action="{{ url_for('books') }}" class="search-form">
-        <input 
-            type="text" 
-            name="search" 
-            placeholder="Search a book..." 
-            value="{{ search }}" 
-            class="search-input">
-        <button type="submit" class="search-btn">Search</button>
-    </form>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+
+        <!-- Filter Button -->
+        <button 
+            class="filter-btn"
+            onclick="document.getElementById('filter-popup').style.display='block'"
+            style="height: 42px; display:flex; align-items:center;"
+        >
+            ⛃ Filter
+        </button>
+
+        <!-- Search Form -->
+        <form method="get" action="{{ url_for('books') }}" class="search-form">
+
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Search by title or author..." 
+                value="{{ search }}" 
+                class="search-input"
+                style="height: 42px;"
+            >
+
+            <button type="submit" class="search-btn" style="height: 42px;">
+                Search
+            </button>
+
+        </form>
+
+    </div>
+
 
     <!-- Book Cards -->
     <div class="book-list">
@@ -30,16 +53,17 @@
         {% endif %}
     </div>
 
+
     <!-- Pagination -->
     <div class="pagination">
         {% if page > 1 %}
-            <a href="{{ url_for('books', page=page-1, search=search) }}" class="pagination-btn">⟵ Previous</a>
+            <a href="{{ url_for('books', page=page-1, search=search, sort=sort, order=order) }}" class="pagination-btn">⟵ Previous</a>
         {% else %}
             <button class="pagination-btn disabled" disabled>⟵ Previous</button>
         {% endif %}
 
         {% if page < total_pages %}
-            <a href="{{ url_for('books', page=page+1, search=search) }}" class="pagination-btn">Next ⟶</a>
+            <a href="{{ url_for('books', page=page+1, search=search, sort=sort, order=order) }}" class="pagination-btn">Next ⟶</a>
         {% else %}
             <button class="pagination-btn disabled" disabled>Next ⟶</button>
         {% endif %}
@@ -48,5 +72,77 @@
     <div class="page-info">
         Page {{ page }} of {{ total_pages }}
     </div>
+
+
+    <!-- Filter Popup -->
+    <div id="filter-popup" class="filter-popup" style="display:none;">
+        <div class="filter-card">
+
+            <h3>Sort by</h3>
+
+            <form method="get" action="{{ url_for('books') }}">
+
+                <input type="hidden" name="search" value="{{ search }}">
+                <input type="hidden" id="order" name="order" value="{{ order }}">
+
+                <div class="filter-grid" style="
+                    display:grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap:14px 10px;
+                    margin:15px 0 20px;
+                    min-width:260px;
+                ">
+
+                    <label>
+                        <input type="radio" name="sort" value="name"
+                            data-order="asc"
+                            {% if sort=='name' and order=='asc' %}checked{% endif %}>
+                        Title A → Z
+                    </label>
+
+                    <label>
+                        <input type="radio" name="sort" value="name"
+                            data-order="desc"
+                            {% if sort=='name' and order=='desc' %}checked{% endif %}>
+                        Title Z → A
+                    </label>
+
+                    <label>
+                        <input type="radio" name="sort" value="author"
+                            data-order="asc"
+                            {% if sort=='author' and order=='asc' %}checked{% endif %}>
+                        Author A → Z
+                    </label>
+
+                    <label>
+                        <input type="radio" name="sort" value="author"
+                            data-order="desc"
+                            {% if sort=='author' and order=='desc' %}checked{% endif %}>
+                        Author Z → A
+                    </label>
+
+                </div>
+
+                <button type="submit" class="confirm-btn">Confirm</button>
+                <button type="button" class="back-btn"
+                    onclick="document.getElementById('filter-popup').style.display='none'">
+                    Back
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <script>
+        document.querySelectorAll("input[name='sort']").forEach(el => {
+            el.addEventListener("change", () => {
+                let order = el.dataset.order || "asc";
+                document.getElementById("order").value = order;
+            });
+        });
+    </script>
+
 </main>
 {% endblock %}
