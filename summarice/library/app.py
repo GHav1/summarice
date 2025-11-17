@@ -264,7 +264,7 @@ def change_password():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    # Fetch user bsd sessh username
+    # Fetch cur usr 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users WHERE username = %s", (session['username'],))
@@ -300,6 +300,8 @@ def change_password():
 @app.route("/books")
 def books():
     search = request.args.get("search", "").strip()
+    sort = request.args.get("sort", "name")
+    order = request.args.get("order", "asc")
     page = int(request.args.get("page", 1))
     per_page = 3
     offset = (page - 1) * per_page
@@ -307,37 +309,52 @@ def books():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Choose sorting col
+    if sort == "author":
+        sort_column = "author_name"
+    else:
+        sort_column = "book_name"
+
+    order_sql = "ASC" if order == "asc" else "DESC"
+
+    # COUNT
     if search:
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT COUNT(*) AS total
             FROM books
             WHERE book_name LIKE %s OR author_name LIKE %s
         """, (f"%{search}%", f"%{search}%"))
     else:
         cursor.execute("SELECT COUNT(*) AS total FROM books")
-
     total_books = cursor.fetchone()["total"]
     total_pages = (total_books + per_page - 1) // per_page
 
+    # FETCH
     if search:
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT * FROM books
             WHERE book_name LIKE %s OR author_name LIKE %s
+            ORDER BY {sort_column} {order_sql}
             LIMIT %s OFFSET %s
         """, (f"%{search}%", f"%{search}%", per_page, offset))
     else:
-        cursor.execute("SELECT * FROM books LIMIT %s OFFSET %s", (per_page, offset))
+        cursor.execute(f"""
+            SELECT * FROM books
+            ORDER BY {sort_column} {order_sql}
+            LIMIT %s OFFSET %s
+        """, (per_page, offset))
 
     books = cursor.fetchall()
     cursor.close()
     conn.close()
 
     return render_template("book_library.html",
-                           title="Book Library",
                            books=books,
                            page=page,
                            total_pages=total_pages,
-                           search=search)
+                           search=search,
+                           sort=sort,
+                           order=order)
 
 
 # ---------------- USER REQUESTS ----------------
@@ -386,7 +403,7 @@ def add_request():
     return render_template("add_request.html")
 
 
-# MANAGE REQUESTS (Admin)
+# MANAGE REQUESTS
 @app.route("/manage_requests")
 def manage_requests():
     if session.get("role") not in ["admin", "superAdmin"]:
@@ -463,6 +480,7 @@ def edit_books():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Handle POST (sv edit)
     if request.method == "POST":
         book_id = request.form.get("book_id")
         name = request.form.get("book_name")
@@ -477,19 +495,37 @@ def edit_books():
         conn.commit()
 
     search = request.args.get("search", "").strip()
+    sort = request.args.get("sort", "name")
+    order = request.args.get("order", "asc")
+
+    if sort == "author":
+        sort_column = "author_name"
+    else:
+        sort_column = "book_name"
+
+    order_sql = "ASC" if order == "asc" else "DESC"
+
     if search:
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT * FROM books
             WHERE book_name LIKE %s OR author_name LIKE %s
+            ORDER BY {sort_column} {order_sql}
         """, (f"%{search}%", f"%{search}%"))
     else:
-        cursor.execute("SELECT * FROM books")
+        cursor.execute(f"""
+            SELECT * FROM books
+            ORDER BY {sort_column} {order_sql}
+        """)
 
     books = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    return render_template("edit_books.html", books=books, search=search)
+    return render_template("edit_books.html",
+                           books=books,
+                           search=search,
+                           sort=sort,
+                           order=order)
 
 
 # ---------------- RUN APP ----------------
