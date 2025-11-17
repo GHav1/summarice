@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="add-request-section">
-    <h2>Add Book Request</h2>
+    <h2>Add Request</h2>
     <form action="{{ url_for('add_request') }}" method="POST" class="add-request-form">
-        <label for="book_name">Book Name:</label>
+        
+        <label for="book_name">Title Name:</label>
         <input type="text" id="book_name" name="book_name" required>
 
         <label for="author_name">Author:</label>
@@ -13,8 +14,8 @@
         <textarea id="additional_info" name="additional_info" rows="4" placeholder="Optional details..."></textarea>
 
         <div class="form-buttons">
-            <button type="submit" class="confirm-btn">Confirm</button>
-            <a href="{{ url_for('requests') }}" class="cancel-btn">Cancel</a>
+            <button type="submit" class="request-confirm-btn">Confirm</button>
+            <a href="{{ url_for('requests') }}" class="request-cancel-btn">Cancel</a>
         </div>
     </form>
 </main>
@@ -23,10 +24,11 @@
 .add-request-section {
     max-width: 500px;
     margin: 40px auto;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
-    background: #f9f9f9;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    text-align: left;
 }
 
 .add-request-form {
@@ -34,65 +36,65 @@
     flex-direction: column;
 }
 
-label {
-    margin-top: 10px;
-    text-align: left;
+.add-request-form label {
+    margin-top: 12px;
     font-weight: bold;
 }
 
-input, textarea {
-    padding: 8px;
+.add-request-form input,
+.add-request-form textarea {
     margin-top: 4px;
-    border-radius: 5px;
+    padding: 10px;
+    border-radius: 6px;
     border: 1px solid #ccc;
+    font-size: 14px;
 }
 
 .form-buttons {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 22px;
 }
 
-.confirm-btn {
-    background-color: #4CAF50;
-    color: white;
+.request-confirm-btn,
+.request-cancel-btn {
+    width: 160px;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
     border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    transform: none !important;
-}
-
-.confirm-btn:hover {
-    background-color: #2E7D32;
-    transform: none !important;
-}
-
-.confirm-btn:active {
-    background-color: #1B5E20;
-    transform: none !important;
-}
-
-.cancel-btn {
-    background-color: #f44336;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 5px;
+    text-align: center;
     text-decoration: none;
-    transition: background-color 0.3s ease;
-    transform: none !important;
+    display: inline-block;
+    color: white;
 }
 
-.cancel-btn:hover {
-    background-color: #b71c1c;
-    transform: none !important;
+.request-confirm-btn {
+    background: #4CAF50;
 }
 
-.cancel-btn:active {
-    background-color: #7f0000;
-    transform: none !important;
+.request-confirm-btn:hover {
+    background: #2E7D32;
 }
 
+.request-confirm-btn:active {
+    background: #1B5E20;
+}
+
+.request-cancel-btn {
+    background: #f44336;
+}
+
+.request-cancel-btn:hover {
+    background: #b71c1c;
+}
+
+.request-cancel-btn:active {
+    background: #7f0000;
+}
 </style>
+
 {% endblock %}
