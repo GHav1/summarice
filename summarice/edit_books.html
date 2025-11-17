@@ -3,116 +3,100 @@
 {% block content %}
 <h1 style="text-align:center; margin-top:20px;">Edit Books</h1>
 
-<!-- Top Bar: Filter -->
+<!-- Top Bar -->
 <div class="top-bar" style="text-align:center; margin-top:15px; display:flex; justify-content:center; align-items:center; gap:10px;">
 
     <!-- Filter Button -->
-    <button
-        id="filter-open-btn"
-        style="height:42px; display:flex; align-items:center; background-color:#28a745; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;"
-        onclick="openFilter()"
-    >
-        ⛃ Filter
-    </button>
+    <button class="filter-btn" style="height:42px; display:flex; align-items:center;" onclick="openFilter()">⛃ Filter</button>
 
-    <!-- Search Form  -->
-    <form method="get" action="{{ url_for('edit_books') }}" style="display:inline-block;">
-        <input
-            type="text"
-            name="search"
-            placeholder="Search by title or author..."
-            value="{{ search }}"
-            style="width:300px; padding:8px; height:42px;"
-        >
-        <button
-            type="submit"
-            style="background-color:#007BFF; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; height:42px;"
-        >
-            🔍 Search
-        </button>
+    <!-- Search -->
+    <form method="get" action="{{ url_for('edit_books') }}" style="display:flex; align-items:center; gap:8px;" id="edit-search-form">
+        <input type="text" name="search" placeholder="Search by title or author..." value="{{ search }}" style="width:300px; padding:8px; height:42px;">
+        <button type="submit" style="background-color:#007BFF; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; height:42px;">🔍 Search</button>
 
-        <input type="hidden" name="sort" value="{{ sort }}">
-        <input type="hidden" name="order" value="{{ order }}">
+
+        <input type="hidden" id="hidden-sort" name="sort" value="{{ sort }}">
+        <input type="hidden" id="hidden-order" name="order" value="{{ order }}">
     </form>
 </div>
 
-<!-- Filter Popup -->
+
+<div id="filter-backdrop" style="display:none;" onclick="closeFilter()"></div>
+
 <div id="filter-popup" style="display:none;">
-    <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; width:320px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.2); z-index:2000;">
-        <h3 style="margin-top:0;">Sort Books</h3>
+    <div class="filter-card">
+        <h3 style="text-align:center; margin-bottom:8px;">Sort Books</h3>
 
-        <form id="filter-form" method="get" action="{{ url_for('edit_books') }}">
-            <!-- Preserve current search -->
-            <input type="hidden" name="search" value="{{ search }}">
-            <input type="hidden" id="filter-order" name="order" value="{{ order }}">
+        <div class="filter-grid">
+            <label><input type="radio" name="popup-sort" value="title_asc"> Title A → Z</label>
+            <label><input type="radio" name="popup-sort" value="title_desc"> Title Z → A</label>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0 18px;">
-                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
-                    <input type="radio" name="sort" value="name" data-order="asc" {% if sort=='name' and order=='asc' %}checked{% endif %}>
-                    Title A → Z
-                </label>
+            <label><input type="radio" name="popup-sort" value="author_asc"> Author A → Z</label>
+            <label><input type="radio" name="popup-sort" value="author_desc"> Author Z → A</label>
+        </div>
 
-                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
-                    <input type="radio" name="sort" value="name" data-order="desc" {% if sort=='name' and order=='desc' %}checked{% endif %}>
-                    Title Z → A
-                </label>
-
-                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
-                    <input type="radio" name="sort" value="author" data-order="asc" {% if sort=='author' and order=='asc' %}checked{% endif %}>
-                    Author A → Z
-                </label>
-
-                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
-                    <input type="radio" name="sort" value="author" data-order="desc" {% if sort=='author' and order=='desc' %}checked{% endif %}>
-                    Author Z → A
-                </label>
-            </div>
-
-            <div style="display:flex; justify-content:space-between; gap:12px;">
-                <button type="submit" style="flex:1; padding:8px 12px; background:#43a047; color:white; border:none; border-radius:6px; font-weight:bold;">Confirm</button>
-                <button type="button" onclick="closeFilter()" style="flex:1; padding:8px 12px; background:#888; color:white; border:none; border-radius:6px; font-weight:bold;">Back</button>
-            </div>
-        </form>
+        <div style="display:flex; gap:12px; margin-top:12px;">
+            <button class="confirm-btn" onclick="applySort('edit')">Confirm</button>
+            <button class="back-btn" onclick="closeFilter()">Back</button>
+        </div>
     </div>
-
-    <!-- backdrop -->
-    <div id="filter-backdrop" style="position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:1999;" onclick="closeFilter()"></div>
 </div>
 
 <!-- Book Cards -->
 <div style="max-width:900px; margin:30px auto;">
     {% for book in books %}
-    <div id="book-card-{{ book.id }}" style="border:1px solid #ccc; border-radius:10px; padding:20px; margin-bottom:20px; background-color:#fafafa;">
-        <form method="POST" action="{{ url_for('edit_books') }}" id="form-{{ book.id }}">
+    <div id="book-card-{{ book.id }}" style="border:1px solid #ccc; border-radius:10px; padding:20px; margin-bottom:20px; background-color:#fafafa; display:flex; gap:20px;">
+
+        <!-- LEFT: IMAGE -->
+        <div style="width:150px; height:200px; border:1px solid #ccc; display:flex; justify-content:center; align-items:center; overflow:hidden; border-radius:6px; background:white;">
+            {% if book.image_filename %}
+                <img src="{{ url_for('book_images', filename=book.image_filename) }}" style="width:100%; height:100%; object-fit:cover;">
+            {% else %}
+                <span style="color:#777;">No Image</span>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT: FORM CONTENT -->
+        <form method="POST" action="{{ url_for('edit_books') }}" enctype="multipart/form-data" style="flex:1;">
             <input type="hidden" name="book_id" value="{{ book.id }}">
+
 
             <div id="view-mode-{{ book.id }}">
                 <h2>{{ book.book_name }}</h2>
                 <p><strong>Author:</strong> {{ book.author_name }}</p>
                 <p>{{ book.content[:200] }}{% if book.content|length > 200 %}...{% endif %}</p>
 
-                <button type="button" onclick="enableEdit({{ book.id }})" style="background-color:#007BFF; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
-                    ✏️ Edit
-                </button>
+                <button type="button" onclick="enableEdit({{ book.id }})" style="background-color:#007BFF; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">✏️ Edit</button>
             </div>
 
+            <!-- EDIT MODE -->
             <div id="edit-mode-{{ book.id }}" style="display:none;">
-                <label><strong>Book Title:</strong></label><br>
-                <input type="text" name="book_name" value="{{ book.book_name }}" style="width:100%; padding:8px; margin-bottom:10px;"><br>
+                <label><strong>Book Title:</strong></label>
+                <input type="text" name="book_name" value="{{ book.book_name }}" style="width:100%; padding:8px; margin-bottom:10px;">
 
-                <label><strong>Author:</strong></label><br>
-                <input type="text" name="author_name" value="{{ book.author_name }}" style="width:100%; padding:8px; margin-bottom:10px;"><br>
+                <label><strong>Author:</strong></label>
+                <input type="text" name="author_name" value="{{ book.author_name }}" style="width:100%; padding:8px; margin-bottom:10px;">
 
-                <label><strong>Content:</strong></label><br>
-                <textarea name="content" rows="5" style="width:100%; padding:8px; margin-bottom:10px;">{{ book.content }}</textarea><br>
+                <label><strong>Content:</strong></label>
+                <textarea name="content" rows="5" style="width:100%; padding:8px; margin-bottom:10px;">{{ book.content }}</textarea>
 
-                <div style="margin-top:10px;">
-                    <button type="submit" style="background-color:green; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-right:10px;">
-                        💾 Save</button>
-                    <button type="button" onclick="cancelEdit({{ book.id }})" style="background-color:#dc3545; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
-                        ❌ Cancel</button>
-                    <button type="button" onclick="confirmDelete({{ book.id }})" style="background-color:#d9534f; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-left:10px;">
-                        🗑️ Delete</button>
+                <!-- IMAGE SECTION -->
+                <label><strong>Book Image:</strong></label><br>
+
+                {% if book.image_filename %}
+                    <p>Current image: <strong>{{ book.image_filename }}</strong></p>
+                    <button type="button" onclick="deleteImage({{ book.id }})" style="background:#d9534f; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">🗑️ Remove Image</button>
+                {% endif %}
+
+                <p style="margin-top:10px;">Upload new image:</p>
+                <input type="file" name="image" accept="image/*">
+
+                <div style="margin-top:15px;">
+                    <button type="submit" style="background-color:green; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-right:10px;">💾 Save</button>
+
+                    <button type="button" onclick="cancelEdit({{ book.id }})" style="background-color:#dc3545; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">❌ Cancel</button>
+
+                    <button type="button" onclick="confirmDelete({{ book.id }})" style="background-color:#d9534f; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-left:10px;">🗑️ Delete</button>
                 </div>
             </div>
         </form>
@@ -122,36 +106,109 @@
     {% endfor %}
 </div>
 
+
 <script>
-function enableEdit(bookId) {
-    document.getElementById("view-mode-" + bookId).style.display = "none";
-    document.getElementById("edit-mode-" + bookId).style.display = "block";
+function enableEdit(id) {
+    document.getElementById("view-mode-" + id).style.display = "none";
+    document.getElementById("edit-mode-" + id).style.display = "block";
 }
-function cancelEdit(bookId) {
-    document.getElementById("edit-mode-" + bookId).style.display = "none";
-    document.getElementById("view-mode-" + bookId).style.display = "block";
+
+function cancelEdit(id) {
+    document.getElementById("view-mode-" + id).style.display = "block";
+    document.getElementById("edit-mode-" + id).style.display = "none";
 }
-function confirmDelete(bookId) {
-    if (confirm("Delete this book? Action cannot be undone")) {
-        window.location.href = "/delete_book/" + bookId;
+
+function confirmDelete(id) {
+    if (confirm("Delete this book? This action cannot be undone.")) {
+        window.location.href = "/delete_book/" + id;
     }
 }
 
-function openFilter() {
-    document.getElementById('filter-popup').style.display = 'block';
-}
-function closeFilter() {
-    document.getElementById('filter-popup').style.display = 'none';
+function deleteImage(id) {
+    if (confirm("Delete the image for this book?")) {
+        window.location.href = "/delete_book_image/" + id;
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll("input[name='sort']").forEach(el => {
-        el.addEventListener('change', () => {
-            let order = el.dataset.order || 'asc';
-            document.getElementById('filter-order').value = order;
-        });
-    });
-});
+
+function openFilter() {
+    document.getElementById('filter-backdrop').style.display = 'block';
+    document.getElementById('filter-popup').style.display = 'block';
+
+    const curSort = document.getElementById('hidden-sort') ? document.getElementById('hidden-sort').value : '';
+    const curOrder = document.getElementById('hidden-order') ? document.getElementById('hidden-order').value : '';
+    if (curSort && curOrder) {
+        const selector = `input[name='popup-sort'][value="${curSort}_${curOrder}"]`;
+        const el = document.querySelector(selector);
+        if (el) el.checked = true;
+    }
+}
+
+function closeFilter() {
+    document.getElementById('filter-popup').style.display = 'none';
+    document.getElementById('filter-backdrop').style.display = 'none';
+}
+
+function applySort(target) {
+    const selected = document.querySelector("input[name='popup-sort']:checked");
+    if (!selected) {
+        alert("Please select a sort option.");
+        return;
+    }
+    const [key, ord] = selected.value.split('_');
+
+    if (target === 'edit') {
+
+        const hiddenSort = document.getElementById('hidden-sort');
+        const hiddenOrder = document.getElementById('hidden-order');
+        if (hiddenSort && hiddenOrder) {
+            hiddenSort.value = key;
+            hiddenOrder.value = ord;
+
+            const form = document.getElementById('edit-search-form');
+            if (form) form.submit();
+        }
+    } else {
+        closeFilter();
+    }
+}
 </script>
+
+<style>
+    #filter-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 340px;
+        background: #fff;
+        padding: 18px;
+        border-radius: 10px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        z-index: 9999;
+    }
+    #filter-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 9998;
+    }
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 8px;
+    }
+    .confirm-btn, .back-btn {
+        flex: 1;
+        padding: 10px;
+        font-weight: bold;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+    }
+    .confirm-btn { background: linear-gradient(90deg,#4CAF50,#66BB6A); color:#fff; }
+    .back-btn { background: #e0e0e0; color:#333; }
+</style>
 
 {% endblock %}
