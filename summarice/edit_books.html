@@ -3,29 +3,86 @@
 {% block content %}
 <h1 style="text-align:center; margin-top:20px;">Edit Books</h1>
 
-<!-- Search Bar -->
-<form method="get" action="{{ url_for('edit_books') }}" style="text-align:center; margin-top:15px;">
-    <input 
-        type="text" 
-        name="search" 
-        placeholder="Search by title or author..." 
-        value="{{ search }}" 
-        style="width:300px; padding:8px;"
-    >
-    <button 
-        type="submit" 
-        style="background-color:#007BFF; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;"
-    >
-        🔍 Search
-    </button>
-</form>
+<!-- Top Bar: Filter -->
+<div class="top-bar" style="text-align:center; margin-top:15px; display:flex; justify-content:center; align-items:center; gap:10px;">
 
+    <!-- Filter Button -->
+    <button
+        id="filter-open-btn"
+        style="height:42px; display:flex; align-items:center; background-color:#28a745; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;"
+        onclick="openFilter()"
+    >
+        ⛃ Filter
+    </button>
+
+    <!-- Search Form  -->
+    <form method="get" action="{{ url_for('edit_books') }}" style="display:inline-block;">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by title or author..."
+            value="{{ search }}"
+            style="width:300px; padding:8px; height:42px;"
+        >
+        <button
+            type="submit"
+            style="background-color:#007BFF; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; height:42px;"
+        >
+            🔍 Search
+        </button>
+
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <input type="hidden" name="order" value="{{ order }}">
+    </form>
+</div>
+
+<!-- Filter Popup -->
+<div id="filter-popup" style="display:none;">
+    <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; width:320px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.2); z-index:2000;">
+        <h3 style="margin-top:0;">Sort Books</h3>
+
+        <form id="filter-form" method="get" action="{{ url_for('edit_books') }}">
+            <!-- Preserve current search -->
+            <input type="hidden" name="search" value="{{ search }}">
+            <input type="hidden" id="filter-order" name="order" value="{{ order }}">
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0 18px;">
+                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
+                    <input type="radio" name="sort" value="name" data-order="asc" {% if sort=='name' and order=='asc' %}checked{% endif %}>
+                    Title A → Z
+                </label>
+
+                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
+                    <input type="radio" name="sort" value="name" data-order="desc" {% if sort=='name' and order=='desc' %}checked{% endif %}>
+                    Title Z → A
+                </label>
+
+                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
+                    <input type="radio" name="sort" value="author" data-order="asc" {% if sort=='author' and order=='asc' %}checked{% endif %}>
+                    Author A → Z
+                </label>
+
+                <label style="white-space:nowrap; display:flex; align-items:center; gap:8px;">
+                    <input type="radio" name="sort" value="author" data-order="desc" {% if sort=='author' and order=='desc' %}checked{% endif %}>
+                    Author Z → A
+                </label>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; gap:12px;">
+                <button type="submit" style="flex:1; padding:8px 12px; background:#43a047; color:white; border:none; border-radius:6px; font-weight:bold;">Confirm</button>
+                <button type="button" onclick="closeFilter()" style="flex:1; padding:8px 12px; background:#888; color:white; border:none; border-radius:6px; font-weight:bold;">Back</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- backdrop -->
+    <div id="filter-backdrop" style="position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:1999;" onclick="closeFilter()"></div>
+</div>
+
+<!-- Book Cards -->
 <div style="max-width:900px; margin:30px auto;">
     {% for book in books %}
-    <div 
-        id="book-card-{{ book.id }}" 
-        style="border:1px solid #ccc; border-radius:10px; padding:20px; margin-bottom:20px; background-color:#fafafa;"
-    >
+    <div id="book-card-{{ book.id }}" style="border:1px solid #ccc; border-radius:10px; padding:20px; margin-bottom:20px; background-color:#fafafa;">
         <form method="POST" action="{{ url_for('edit_books') }}" id="form-{{ book.id }}">
             <input type="hidden" name="book_id" value="{{ book.id }}">
 
@@ -33,62 +90,29 @@
                 <h2>{{ book.book_name }}</h2>
                 <p><strong>Author:</strong> {{ book.author_name }}</p>
                 <p>{{ book.content[:200] }}{% if book.content|length > 200 %}...{% endif %}</p>
-                <button 
-                    type="button" 
-                    onclick="enableEdit({{ book.id }})"
-                    style="background-color:#007BFF; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;"
-                >
+
+                <button type="button" onclick="enableEdit({{ book.id }})" style="background-color:#007BFF; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
                     ✏️ Edit
                 </button>
             </div>
 
             <div id="edit-mode-{{ book.id }}" style="display:none;">
                 <label><strong>Book Title:</strong></label><br>
-                <input 
-                    type="text" 
-                    name="book_name" 
-                    value="{{ book.book_name }}" 
-                    style="width:100%; padding:8px; margin-bottom:10px;"
-                ><br>
+                <input type="text" name="book_name" value="{{ book.book_name }}" style="width:100%; padding:8px; margin-bottom:10px;"><br>
 
                 <label><strong>Author:</strong></label><br>
-                <input 
-                    type="text" 
-                    name="author_name" 
-                    value="{{ book.author_name }}" 
-                    style="width:100%; padding:8px; margin-bottom:10px;"
-                ><br>
+                <input type="text" name="author_name" value="{{ book.author_name }}" style="width:100%; padding:8px; margin-bottom:10px;"><br>
 
                 <label><strong>Content:</strong></label><br>
-                <textarea 
-                    name="content" 
-                    rows="5" 
-                    style="width:100%; padding:8px; margin-bottom:10px;"
-                >{{ book.content }}</textarea><br>
+                <textarea name="content" rows="5" style="width:100%; padding:8px; margin-bottom:10px;">{{ book.content }}</textarea><br>
 
                 <div style="margin-top:10px;">
-                    <button 
-                        type="submit" 
-                        style="background-color:green; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-right:10px;"
-                    >
-                        💾 Save
-                    </button>
-
-                    <button 
-                        type="button" 
-                        onclick="cancelEdit({{ book.id }})"
-                        style="background-color:#dc3545; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;"
-                    >
-                        ❌ Cancel
-                    </button>
-
-                    <button 
-                        type="button"
-                        onclick="confirmDelete({{ book.id }})"
-                        style="background-color:#d9534f; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-left:10px;"
-                    >
-                        🗑️ Delete
-                    </button>
+                    <button type="submit" style="background-color:green; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-right:10px;">
+                        💾 Save</button>
+                    <button type="button" onclick="cancelEdit({{ book.id }})" style="background-color:#dc3545; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
+                        ❌ Cancel</button>
+                    <button type="button" onclick="confirmDelete({{ book.id }})" style="background-color:#d9534f; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-left:10px;">
+                        🗑️ Delete</button>
                 </div>
             </div>
         </form>
@@ -103,16 +127,31 @@ function enableEdit(bookId) {
     document.getElementById("view-mode-" + bookId).style.display = "none";
     document.getElementById("edit-mode-" + bookId).style.display = "block";
 }
-
 function cancelEdit(bookId) {
     document.getElementById("edit-mode-" + bookId).style.display = "none";
     document.getElementById("view-mode-" + bookId).style.display = "block";
 }
-
 function confirmDelete(bookId) {
     if (confirm("Delete this book? Action cannot be undone")) {
         window.location.href = "/delete_book/" + bookId;
     }
 }
+
+function openFilter() {
+    document.getElementById('filter-popup').style.display = 'block';
+}
+function closeFilter() {
+    document.getElementById('filter-popup').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll("input[name='sort']").forEach(el => {
+        el.addEventListener('change', () => {
+            let order = el.dataset.order || 'asc';
+            document.getElementById('filter-order').value = order;
+        });
+    });
+});
 </script>
+
 {% endblock %}
