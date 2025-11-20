@@ -110,7 +110,6 @@ def signup():
         password = request.form.get("password")
         confirm = request.form.get("confirm")
 
-        # ---- Username Check ----
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
@@ -368,7 +367,7 @@ def books():
 
     order_sql = "ASC" if order == "asc" else "DESC"
 
-    # Count total books
+    # Count books
     if search:
         cursor.execute("""
             SELECT COUNT(*) AS total
@@ -455,6 +454,31 @@ def add_request():
 
     return render_template("add_request.html")
 
+@app.route("/delete_request/<int:request_id>")
+def delete_request(request_id):
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    username = session["username"]
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT account FROM requests WHERE id = %s", (request_id,))
+    owner = cursor.fetchone()
+
+    if not owner or owner["account"] != username:
+        flash("You cannot delete this request.")
+        return redirect(url_for("requests"))
+
+    cursor.execute("DELETE FROM requests WHERE id = %s", (request_id,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    flash("Request deleted.")
+    return redirect(url_for("requests"))
+
 
 # ---------------- MANAGE REQUESTS ----------------
 @app.route("/manage_requests")
@@ -475,8 +499,8 @@ def manage_requests():
                            total_requests=len(requests_list))
 
 
-@app.route("/delete_request/<int:request_id>")
-def delete_request(request_id):
+@app.route("/admin_delete_request/<int:request_id>")
+def admin_delete_request(request_id):
     if session.get("role") not in ["admin", "superAdmin"]:
         return redirect(url_for("login"))
 
@@ -637,8 +661,6 @@ def edit_books():
         sort=sort,
         order=order
     )
-
-
-# ---------------- RUN APP ----------------
-if __name__ == "__main__":
-    app.run(debug=True)
+    
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=int(os.getenv("PORT", 5000)))
